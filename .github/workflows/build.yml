@@ -39,8 +39,8 @@ jobs:
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: ordinance_controller
+        name: ordinance
         path: |
-          ordinance_controller.zip
-          ordinance_controller.tar.gz
-          ordinance_controller_archive/
+          ordinance.zip
+          ordinance.tar.gz
+          ordinance_archive/

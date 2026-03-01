@@ -17,7 +17,7 @@ scripting_dir = os.path.join(maindir, "scripting")
 vmf_dir = os.path.join(maindir, "vmf")
 dependencies_dir = os.path.join(maindir, "dependencies")
 
-plugin_name = "submit_pawn"
+plugin_name = "ordinance"
 
 if "--archive" in sys.argv:
     archive_files = True
@@ -36,7 +36,7 @@ SteamWorks = os.path.join(maindir, "dependencies", "SteamWorks", "Pawn", "includ
 
 # SourcePawn Script
 
-script = os.path.join(scripting_dir, "submit_pawn.sp")
+script = os.path.join(scripting_dir, "ordinance.sp")
 
 if not os.path.isdir(sm_json) or not os.path.isdir(SteamWorks):
     print("Try Running git submodule update --init --recursive First")
