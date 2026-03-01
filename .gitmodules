@@ -1,0 +1,6 @@
+[submodule "dependencies/SteamWorks"]
+	path = dependencies/SteamWorks
+	url = https://github.com/KyleSanderson/SteamWorks
+[submodule "dependencies/sm-json"]
+	path = dependencies/sm-json
+	url = https://github.com/clugg/sm-json
