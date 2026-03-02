@@ -25,6 +25,8 @@ public void SendData(const char[] player, const char[] trigger, int timestamp)
 	char date[256];
 	char output[1024];
 	char url[256];
+	char ord_server[256];
+	GetConVarString(g_ordinance_server, ord_server, sizeof(ord_server));
 	JSON_Object obj = new JSON_Object();
 	FormatTime(date, sizeof(date), "%B %dTH %Y", timestamp);
 	PrintToChatAll("Player : %s Trigger : %s Date : %s", player, trigger, date);
@@ -32,7 +34,7 @@ public void SendData(const char[] player, const char[] trigger, int timestamp)
 	obj.SetInt("timestamp", timestamp);
 	obj.SetString("trigger", trigger);
 	obj.Encode(output, sizeof(output));
-	Format(url, sizeof(url), "http://%s/ord/pawn/submit", ORDINANCE_SERVER);
+	Format(url, sizeof(url), "http://%s/ord/pawn/submit", ord_server);
 	Handle req = SteamWorks_CreateHTTPRequest(k_EHTTPMethodPOST, url);
 	if (req == INVALID_HANDLE) return;
 	SteamWorks_SetHTTPRequestHeaderValue(req, "Content-Type", "application/json");
@@ -44,6 +46,8 @@ public void SendData(const char[] player, const char[] trigger, int timestamp)
 public void set_pawn_state(const char[] state, bool senddata)
 {
 	char path[PLATFORM_MAX_PATH];
+	char ord_server[256];
+	GetConVarString(g_ordinance_server, ord_server, sizeof(ord_server));
 	BuildPath(Path_SM, path, sizeof(path), "configs/%s", PAWN_STATE_FILE);
 	KeyValues kv = new KeyValues("Pawn_state");
 	kv.SetString("state", state);
@@ -57,7 +61,7 @@ public void set_pawn_state(const char[] state, bool senddata)
 		JSON_Object obj = new JSON_Object();
 		obj.SetString("state", state);
 		obj.Encode(output, sizeof(output));
-		Format(url, sizeof(url), "http://%s/ord/pawn/state", ORDINANCE_SERVER);
+		Format(url, sizeof(url), "http://%s/ord/pawn/state", ord_server);
 		Handle req = SteamWorks_CreateHTTPRequest(k_EHTTPMethodPOST, url);
 		if (req == INVALID_HANDLE) return;
 		SteamWorks_SetHTTPRequestHeaderValue(req, "Content-Type", "application/json");

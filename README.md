@@ -33,7 +33,8 @@
 ## Installation ##
 1. Grab the latest release from the release page and unzip the file copy the plugins folder into your sourcemod folder.
 2. Install the SteamWorks Extension on your Server
-2. Restart the server or type `sm plugins load ordinance` in the console to load the plugin.
+3. Add ordinance_server "127.0.0.1:5000" to your server.cfg (ORDINANCE_SERVER)
+4. Restart the server or type `sm plugins load ordinance` in the console to load the plugin.
 
 
 ## Usage ##

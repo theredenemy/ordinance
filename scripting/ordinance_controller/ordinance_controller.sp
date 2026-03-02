@@ -101,6 +101,8 @@ public void SendInput(const char[] input)
 	char pawn_name[MAX_NAME_LENGTH];
 	char output[1024];
 	char url[256];
+	char ord_server[256];
+	GetConVarString(g_ordinance_server, ord_server, sizeof(ord_server));
 	JSON_Object obj = new JSON_Object();
 	BuildPath(Path_SM, path, sizeof(path), "configs/%s", PLAYER_PAWN_FILE);
 	KeyValues kv = new KeyValues("Player_Pawn");
@@ -121,7 +123,7 @@ public void SendInput(const char[] input)
 	obj.SetString("input", input);
 	obj.SetString("pawn_name", pawn_name);
 	obj.Encode(output, sizeof(output));
-	Format(url, sizeof(url), "http://%s/ord/input", ORDINANCE_SERVER);
+	Format(url, sizeof(url), "http://%s/ord/input", ord_server);
 	Handle req = SteamWorks_CreateHTTPRequest(k_EHTTPMethodPOST, url);
 	if (req == INVALID_HANDLE) return;
 	SteamWorks_SetHTTPRequestHeaderValue(req, "Content-Type", "application/json");
@@ -190,11 +192,13 @@ public Action ord_render_command(int args)
 {
 	int ordinance_enabled = GetConVarInt(g_ordinance_enabled);
 	char url[256];
+	char ord_server[256];
+	GetConVarString(g_ordinance_server, ord_server, sizeof(ord_server));
 	if (IsMapValid("ord_ren"))
 	{
 		if (ordinance_enabled == 1) 
 		{
-			Format(url, sizeof(url), "http://%s/ord/input/render", ORDINANCE_SERVER);
+			Format(url, sizeof(url), "http://%s/ord/input/render", ord_server);
 			Handle req = SteamWorks_CreateHTTPRequest(k_EHTTPMethodGET, url);
 			SteamWorks_SetHTTPRequestHeaderValue(req, "Content-Type", "application/json");
 			SteamWorks_SetHTTPCallbacks(req, OnRenderResponse);
@@ -214,9 +218,11 @@ public Action ord_get_inputs(int args)
 {
 	int ordinance_enabled = GetConVarInt(g_ordinance_enabled);
 	char url[256];
+	char ord_server[256];
+	GetConVarString(g_ordinance_server, ord_server, sizeof(ord_server));
 	if (ordinance_enabled == 1) 
 	{
-		Format(url, sizeof(url), "http://%s/ord/input", ORDINANCE_SERVER);
+		Format(url, sizeof(url), "http://%s/ord/input", ord_server);
 		Handle req = SteamWorks_CreateHTTPRequest(k_EHTTPMethodGET, url);
 		SteamWorks_SetHTTPRequestHeaderValue(req, "Content-Type", "application/json");
 		SteamWorks_SetHTTPCallbacks(req, OnGetInputsResponse);

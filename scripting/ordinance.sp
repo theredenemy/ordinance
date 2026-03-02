@@ -9,7 +9,8 @@
 ConVar g_ordinance_enabled;
 #define PLAYER_PAWN_FILE "player_pawn.txt"
 #define PAWN_STATE_FILE "pawn_state.txt"
-#define ORDINANCE_SERVER "10.0.0.100:5000"
+// #define ORDINANCE_SERVER "10.0.0.100:5000"
+ConVar g_ordinance_server;
 bool g_ordserveronline;
 char g_mapname[128];
 public Plugin myinfo =
@@ -17,7 +18,7 @@ public Plugin myinfo =
 	name = "ordinance",
 	author = "TheRedEnemy",
 	description = "",
-	version = "1.0.0",
+	version = "2.0.0",
 	url = "https://github.com/theredenemy/ordinance"
 };
 
@@ -35,6 +36,7 @@ public void OnPluginStart()
 	RegServerCmd("vul_text", display_vul_text_cmd);
 	makePawnConfig();
 	g_ordinance_enabled = CreateConVar("ordinance_enabled", "0");
+	g_ordinance_server = CreateConVar("ordinance_server", "127.0.0.1:5000");
 	g_ordserveronline = false;
 	RegServerCmd("ord_input", ord_input_command);
 	RegServerCmd("ord_render", ord_render_command);
@@ -100,6 +102,8 @@ public void OnMapStart()
 	clearPawnVars();
 	char mapname[128];
 	char url[256];
+	char ord_server[256];
+	GetConVarString(g_ordinance_server, ord_server, sizeof(ord_server));
 	g_hit_vul_door = false;
 	GetCurrentMap(mapname, sizeof(mapname));
 	if (StrEqual(mapname, "ord_error"))
@@ -107,7 +111,7 @@ public void OnMapStart()
 		set_pawn_state("dead", false);
 	}
 	HookEntityOutput("trigger_hurt", "OnHurtPlayer", OnTriggerHurt);
-	Format(url, sizeof(url), "http://%s", ORDINANCE_SERVER);
+	Format(url, sizeof(url), "http://%s", ord_server);
 	Handle hRequest = SteamWorks_CreateHTTPRequest(k_EHTTPMethodGET, url);
 	SteamWorks_SetHTTPCallbacks(hRequest, CheckOrdServer);
 	SteamWorks_SendHTTPRequest(hRequest);
