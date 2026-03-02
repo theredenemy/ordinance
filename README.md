@@ -20,7 +20,7 @@
         src="https://img.shields.io/github/repo-size/theredenemy/ordinance"
     />
     <img
-        src="https://img.shields.io/github/workflow/status/theredenemy/ordinance/Build%20and%20release"
+        src="https://img.shields.io/github/workflow/status/theredenemy/ordinance/Build%20and%20Release"
     />
   </p>
 </div>
