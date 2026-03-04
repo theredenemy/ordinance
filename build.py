@@ -14,7 +14,7 @@ archive = None
 archive_files = False
 plugins_dir = os.path.join(maindir, "plugins")
 scripting_dir = os.path.join(maindir, "scripting")
-vmf_dir = os.path.join(maindir, "vmf")
+maps_dir = os.path.join(maindir, "maps")
 cfgs_dir = os.path.join(maindir, "cfg")
 dependencies_dir = os.path.join(maindir, "dependencies")
 
@@ -114,7 +114,7 @@ if archive_files is True:
     os.mkdir(archive_dir)
     shutil.copytree(scripting_dir, os.path.join(archive_dir, "scripting"), dirs_exist_ok=True)
     shutil.copytree(plugins_dir, os.path.join(archive_dir, "plugins"), dirs_exist_ok=True)
-    shutil.copytree(vmf_dir, os.path.join(archive_dir, "vmf"), dirs_exist_ok=True)
+    shutil.copytree(maps_dir, os.path.join(archive_dir, "maps"), dirs_exist_ok=True)
     shutil.copytree(cfgs_dir, os.path.join(archive_dir, "cfgs"), dirs_exist_ok=True)
     shutil.copytree(dependencies_dir, os.path.join(archive_dir, "dependencies"), dirs_exist_ok=True)
     download_file("https://users.alliedmods.net/~kyles/builds/SteamWorks/SteamWorks-git132-windows.zip", os.path.join(archive_dir, "SteamWorks-git132-windows.zip"))
