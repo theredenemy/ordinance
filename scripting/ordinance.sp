@@ -17,12 +17,13 @@ public Plugin myinfo =
 	name = "ordinance",
 	author = "TheRedEnemy",
 	description = "",
-	version = "2.0.2",
+	version = "2.0.3",
 	url = "https://github.com/theredenemy/ordinance"
 };
 
 #include <submit_pawn/submit_pawn.sp>
 #include <ordinance_controller/ordinance_controller.sp>
+#include <chatbot/chatbot.sp>
 public void OnPluginStart()
 {
 	g_triggername = CreateConVar("pawn_trigger", "\0");
@@ -41,6 +42,8 @@ public void OnPluginStart()
 	RegServerCmd("ord_render", ord_render_command);
 	RegServerCmd("ord_clear", ord_clear_command);
 	RegServerCmd("ord_getinputs", ord_get_inputs);
+	RegConsoleCmd("say", Command_Say);
+	RegConsoleCmd("say_team", Command_Say);
 	PrintToServer("ordinance Has Loaded");
 }
 public int CheckOrdServer(Handle hRequest, bool bFailure, bool bRequestSuccessful, EHTTPStatusCode statuscode)

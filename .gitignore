@@ -1,6 +1,5 @@
 .vscode/
 *.smx
-scripting/include/
 /.venv
 /sourcemod-linux
 /sourcemod-win
