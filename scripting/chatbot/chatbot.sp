@@ -5,7 +5,6 @@
 #include <json>
 #include <morecolors>
 
-// NOT DONE
 public int OnChatResponse(Handle req, bool bFailure, bool bRequestSuccessful, EHTTPStatusCode statuscode)
 {
 	char data[1024];
