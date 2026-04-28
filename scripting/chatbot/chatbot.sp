@@ -76,7 +76,7 @@ public Action Command_Say(int client, int args)
     char arg[256];
     char sound[] = "friends/message.wav";
     int msg_len;
-    int ordinance_enabled = GetConVarInt(g_ordinance_enabled);
+    // int ordinance_enabled = GetConVarInt(g_ordinance_enabled);
     
     if (args < 1)
 	{
@@ -110,7 +110,7 @@ public Action Command_Say(int client, int args)
 		
 	EmitSoundToAll(sound);
     PrintToServer("%s: %s", playername, msg);
-    if (ordinance_enabled == 1 || g_ordserveronline) SendChatToServer(msg, playername, steamid);
+    if (g_ordserveronline) SendChatToServer(msg, playername, steamid);
     if (StrEqual(msg, "maze", false) && StrEqual(g_mapname, "ord_error", false))
 	{
 		ForceChangeLevel("mazemazemazemaze", "MAZE");
