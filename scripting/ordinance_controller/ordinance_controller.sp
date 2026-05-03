@@ -155,7 +155,7 @@ public void SendInput(const char[] input)
 	GetConVarString(g_ord_key, ord_key, sizeof(ord_key));
 	SteamWorks_SetHTTPRequestHeaderValue(req, "X-ORD-KEY", ord_key);
 	SteamWorks_SetHTTPRequestRawPostBody(req, "application/json", output, strlen(output));
-	SteamWorks_SetHTTPCallbacks(req, OnModeSetResponse);
+	SteamWorks_SetHTTPCallbacks(req, OnHTTPResponse);
 	SteamWorks_SendHTTPRequest(req);
 }
 public Action ord_clear_command(int args)
@@ -199,7 +199,7 @@ public Action ord_mode_command(int args)
 	GetConVarString(g_ord_key, ord_key, sizeof(ord_key));
 	SteamWorks_SetHTTPRequestHeaderValue(req, "X-ORD-KEY", ord_key);
 	SteamWorks_SetHTTPRequestRawPostBody(req, "application/json", output, strlen(output));
-	SteamWorks_SetHTTPCallbacks(req, OnHTTPResponse);
+	SteamWorks_SetHTTPCallbacks(req, OnModeSetResponse);
 	SteamWorks_SendHTTPRequest(req);
 	return Plugin_Handled;
 }
