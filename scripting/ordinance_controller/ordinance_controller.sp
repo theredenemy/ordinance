@@ -35,6 +35,19 @@ public Action OrdCry(Handle timer)
 	
 	return Plugin_Continue;
 }
+public int OnModeSetResponse(Handle req, bool bFailure, bool bRequestSuccessful, EHTTPStatusCode statuscode)
+{
+	if (bFailure || !bRequestSuccessful || statuscode != k_EHTTPStatusCode200OK)
+	{
+		CloseHandle(req);
+		PrintCenterTextAll("ADMIN: CANT SET MODE");
+		PrintToServer("Close Handle");
+		return 0;
+	}
+	CloseHandle(req);
+	PrintToServer("Close Handle");
+	return 0;
+}
 public int OnRenderResponse(Handle req, bool bFailure, bool bRequestSuccessful, EHTTPStatusCode statuscode)
 {
 	char data[1024];
@@ -142,7 +155,7 @@ public void SendInput(const char[] input)
 	GetConVarString(g_ord_key, ord_key, sizeof(ord_key));
 	SteamWorks_SetHTTPRequestHeaderValue(req, "X-ORD-KEY", ord_key);
 	SteamWorks_SetHTTPRequestRawPostBody(req, "application/json", output, strlen(output));
-	SteamWorks_SetHTTPCallbacks(req, OnHTTPResponse);
+	SteamWorks_SetHTTPCallbacks(req, OnModeSetResponse);
 	SteamWorks_SendHTTPRequest(req);
 }
 public Action ord_clear_command(int args)
