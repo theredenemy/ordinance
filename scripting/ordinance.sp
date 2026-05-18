@@ -16,12 +16,15 @@ bool g_pawnalive;
 char g_mapname[128];
 char g_last_weapon[MAXPLAYERS+1][128];
 KeyValues g_KvItems;
+// 1
+// 2
+// 3
 public Plugin myinfo =
 {
 	name = "ordinance",
 	author = "TheRedEnemy",
 	description = "",
-	version = "5.0.4",
+	version = "5.0.5",
 	url = "https://github.com/theredenemy/ordinance"
 };
 
