@@ -21,7 +21,7 @@ public Plugin myinfo =
 	name = "ordinance",
 	author = "TheRedEnemy",
 	description = "",
-	version = "5.1.1",
+	version = "5.1.2",
 	url = "https://github.com/theredenemy/ordinance"
 };
 
@@ -264,7 +264,8 @@ public void OnMapStart()
 	SteamWorks_SendHTTPRequest(hRequest);
 	if (StrEqual(g_mapname, "view", false))
 	{
-		AddFileToDownloadsTable("sound/view.wav");
+		// I dont know why tf2 does not download view.wav
+		// AddFileToDownloadsTable("sound/view.wav");
 		AddFileToDownloadsTable("materials/view.vmt");
 		AddFileToDownloadsTable("materials/view.vtf");
 	}
