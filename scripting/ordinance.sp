@@ -21,7 +21,7 @@ public Plugin myinfo =
 	name = "ordinance",
 	author = "TheRedEnemy",
 	description = "",
-	version = "5.1.0",
+	version = "5.1.1",
 	url = "https://github.com/theredenemy/ordinance"
 };
 
@@ -243,14 +243,14 @@ void makePawnConfig()
 public void OnMapStart()
 {
 	clearPawnVars();
-	char mapname[128];
 	char url[256];
 	char ord_server[256];
 	int ordinance_enabled = GetConVarInt(g_ordinance_enabled);
 	GetConVarString(g_ordinance_server, ord_server, sizeof(ord_server));
 	g_hit_vul_door = false;
-	GetCurrentMap(mapname, sizeof(mapname));
-	if (StrEqual(mapname, "ord_error", false))
+	g_mapname = "\0";
+	GetCurrentMap(g_mapname, sizeof(g_mapname));
+	if (StrEqual(g_mapname, "ord_error", false))
 	{
 		set_pawn_state("dead", false);
 	}
@@ -262,12 +262,16 @@ public void OnMapStart()
 	SteamWorks_SetHTTPRequestHeaderValue(hRequest, "X-ORD-KEY", ord_key);
 	SteamWorks_SetHTTPCallbacks(hRequest, CheckOrdServer);
 	SteamWorks_SendHTTPRequest(hRequest);
-	g_mapname = "\0";
-	GetCurrentMap(g_mapname, sizeof(g_mapname));
+	if (StrEqual(g_mapname, "view", false))
+	{
+		AddFileToDownloadsTable("sound/view.wav");
+		AddFileToDownloadsTable("materials/view.vmt");
+		AddFileToDownloadsTable("materials/view.vtf");
+	}
 	char path2[PLATFORM_MAX_PATH];
 	char state[256];
 	BuildPath(Path_SM, path2, sizeof(path2), "configs/%s", PAWN_STATE_FILE);
-	if (StrEqual(mapname, "ordinance") || StrEqual(mapname, "ord_mode") )
+	if (StrEqual(g_mapname, "ordinance") || StrEqual(g_mapname, "ord_mode") )
 	{
 		KeyValues kv3 = new KeyValues("Pawn_state");
 		if (!kv3.ImportFromFile(path2))
