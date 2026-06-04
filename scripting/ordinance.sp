@@ -21,7 +21,7 @@ public Plugin myinfo =
 	name = "ordinance",
 	author = "TheRedEnemy",
 	description = "",
-	version = "5.1.2",
+	version = "5.2.0",
 	url = "https://github.com/theredenemy/ordinance"
 };
 
@@ -64,9 +64,36 @@ public void OnPluginStart()
 		}
 	PrintToServer("ordinance Has Loaded");
 }
+public void SendPlayerData(int client)
+{
+	char playername[MAX_NAME_LENGTH];
+	char playersteamid[256];
+	char output[1024];
+	char url[256];
+	char ord_server[256];
+	GetConVarString(g_ordinance_server, ord_server, sizeof(ord_server));
+	JSON_Object obj = new JSON_Object();
+	GetClientName(client, playername, sizeof(playername));
+	GetClientAuthId(client, AuthId_Steam2, playersteamid, sizeof(playersteamid));
+	obj.SetString("player", playername);
+	obj.SetString("steamid", playersteamid);
+	obj.Encode(output, sizeof(output));
+	Format(url, sizeof(url), "%s/getdata", ord_server);
+	Handle req = SteamWorks_CreateHTTPRequest(k_EHTTPMethodPOST, url);
+	if (req == INVALID_HANDLE) return;
+	SteamWorks_SetHTTPRequestHeaderValue(req, "Content-Type", "application/json");
+	SteamWorks_SetHTTPRequestRawPostBody(req, "application/json", output, strlen(output));
+	char ord_key[1024];
+	GetConVarString(g_ord_key, ord_key, sizeof(ord_key));
+	SteamWorks_SetHTTPRequestHeaderValue(req, "X-ORD-KEY", ord_key);
+	SteamWorks_SetHTTPCallbacks(req, OnHTTPResponse);
+	SteamWorks_SendHTTPRequest(req);
+}
+
 public void OnClientPutInServer(int client)
 {
 	SDKHook(client, SDKHook_WeaponSwitchPost, WeaponSwitchPostCheck);
+	SendPlayerData(client);
 }
 public Action WeaponSwitchPostCheck(int client, int weapon)
 {
