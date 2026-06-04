@@ -22,7 +22,38 @@ void clearPawnVars()
 	SetConVarString(g_triggername, "\0");
 	PrintToServer("Vars Cleared");
 }
+public bool IsPawnAlive()
+{
+	char state[256];
+	char path2[PLATFORM_MAX_PATH];
+	BuildPath(Path_SM, path2, sizeof(path2), "configs/%s", PAWN_STATE_FILE);
+	KeyValues kv_pawn = new KeyValues("Pawn_state");
+	if (!kv_pawn.ImportFromFile(path2))
+	{
+		PrintToServer("NO FILE");
+		delete kv_pawn;
+		return false;
+	}
 
+	if (kv_pawn.JumpToKey("state", false))
+	{
+		kv_pawn.GetString(NULL_STRING, state, sizeof(state));
+		delete kv_pawn;
+	}
+	else
+	{
+		delete kv_pawn;
+		state = "alive";
+	}
+	if (StrEqual("alive", state))
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
 public void SendData(const char[] player, const char[] trigger, int timestamp, const char[] team, const char[] weapon, const char[] playerclass)
 {
 	char date[256];
@@ -322,7 +353,19 @@ public Action display_vul_text_cmd(int args)
 
 	if (!g_ordserveronline) {
 		PrintHintTextToAll("ADMIN: ORDINANCE SERVER NOT ONLINE PLEASE TRY AGAIN LATER");
-		return Plugin_Handled;
+		if (!IsPawnAlive())
+		{
+			if (IsMapValid("server_error"))
+			{
+				ForceChangeLevel("server_error", "NO INPUT");
+			}
+			else
+			{
+				ForceChangeLevel("cp_dustbowl", "NO INPUT");
+			}
+			return Plugin_Handled;
+		}
+		
 	}
 	if (ordinance_enabled != 1)
 	{
