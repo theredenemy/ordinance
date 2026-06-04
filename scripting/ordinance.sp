@@ -21,7 +21,7 @@ public Plugin myinfo =
 	name = "ordinance",
 	author = "TheRedEnemy",
 	description = "",
-	version = "5.2.0",
+	version = "5.2.1",
 	url = "https://github.com/theredenemy/ordinance"
 };
 
@@ -93,7 +93,11 @@ public void SendPlayerData(int client)
 public void OnClientPutInServer(int client)
 {
 	SDKHook(client, SDKHook_WeaponSwitchPost, WeaponSwitchPostCheck);
-	SendPlayerData(client);
+	if (g_ordserveronline)
+	{
+		SendPlayerData(client);
+	}
+	
 }
 public Action WeaponSwitchPostCheck(int client, int weapon)
 {
