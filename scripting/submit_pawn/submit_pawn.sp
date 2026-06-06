@@ -339,7 +339,28 @@ public Action pawn_check_cmd(int args)
 
 }
 
+public Action pawn_state_cmd(int args)
+{
+	int ordinance_enabled = GetConVarInt(g_ordinance_enabled);
+	char arg[128];
+	if (args > 1)
+	{
+		return Plugin_Handled;
+	}
+	else if(args < 1)
+	{
+		PrintToServer("[SM] Usage: pawn_state <state>");
+		return Plugin_Handled;
+	}
+	if (ordinance_enabled != 1 || !g_ordserveronline)
+	{
+		return Plugin_Handled;
+	}
+	GetCmdArg(1, arg, sizeof(arg));
 
+	set_pawn_state(arg, true);
+	return Plugin_Handled;
+}
 
 public Action display_vul_text_cmd(int args)
 {

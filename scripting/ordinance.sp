@@ -21,7 +21,7 @@ public Plugin myinfo =
 	name = "ordinance",
 	author = "TheRedEnemy",
 	description = "",
-	version = "6.0.0",
+	version = "6.1.0",
 	url = "https://github.com/theredenemy/ordinance"
 };
 
@@ -54,6 +54,7 @@ public void OnPluginStart()
 	RegServerCmd("ord_getinputs", ord_get_inputs);
 	RegServerCmd("bot_say", Command_Bot_Say);
 	RegServerCmd("ord_mode", ord_mode_command);
+	RegServerCmd("pawn_state", pawn_state_cmd);
 	RegConsoleCmd("say", Command_Say);
 	RegConsoleCmd("say_team", Command_Say);
 	SetConVarFlags(g_ordinance_enabled, FCVAR_NOTIFY);
