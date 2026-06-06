@@ -82,6 +82,7 @@ public int OnRenderResponse(Handle req, bool bFailure, bool bRequestSuccessful, 
 		CreateTimer(20.0, OrdEnd);
 	}
 	CloseHandle(req);
+	json_cleanup_and_delete(obj);
 	PrintToServer("Close Handle");
 	return 0;
 	 
@@ -115,6 +116,7 @@ public int OnGetInputsResponse(Handle req, bool bFailure, bool bRequestSuccessfu
 		PrintToConsoleAll(message);
 	}
 	CloseHandle(req);
+	json_cleanup_and_delete(obj);
 	PrintToServer("Close Handle");
 	return 0;
 	 
@@ -157,6 +159,7 @@ public void SendInput(const char[] input)
 	SteamWorks_SetHTTPRequestRawPostBody(req, "application/json", output, strlen(output));
 	SteamWorks_SetHTTPCallbacks(req, OnHTTPResponse);
 	SteamWorks_SendHTTPRequest(req);
+	json_cleanup_and_delete(obj);
 }
 public Action ord_clear_command(int args)
 {
@@ -201,6 +204,7 @@ public Action ord_mode_command(int args)
 	SteamWorks_SetHTTPRequestRawPostBody(req, "application/json", output, strlen(output));
 	SteamWorks_SetHTTPCallbacks(req, OnModeSetResponse);
 	SteamWorks_SendHTTPRequest(req);
+	json_cleanup_and_delete(obj);
 	return Plugin_Handled;
 }
 public Action ord_input_command(int args)

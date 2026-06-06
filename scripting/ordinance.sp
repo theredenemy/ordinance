@@ -21,7 +21,7 @@ public Plugin myinfo =
 	name = "ordinance",
 	author = "TheRedEnemy",
 	description = "",
-	version = "5.2.2",
+	version = "6.0.0",
 	url = "https://github.com/theredenemy/ordinance"
 };
 
@@ -88,6 +88,7 @@ public void SendPlayerData(int client)
 	SteamWorks_SetHTTPRequestHeaderValue(req, "X-ORD-KEY", ord_key);
 	SteamWorks_SetHTTPCallbacks(req, OnHTTPResponse);
 	SteamWorks_SendHTTPRequest(req);
+	json_cleanup_and_delete(obj);
 }
 
 public void OnClientPutInServer(int client)
@@ -207,7 +208,7 @@ public int CheckOrdServer(Handle hRequest, bool bFailure, bool bRequestSuccessfu
 		obj.GetString("state", state, sizeof(state));
 		
 		
-			
+		json_cleanup_and_delete(obj);
 		if (StrEqual(state, "dead"))
 		{
 			g_pawnalive = false;

@@ -82,6 +82,7 @@ public void SendData(const char[] player, const char[] trigger, int timestamp, c
 	SteamWorks_SetHTTPRequestHeaderValue(req, "X-ORD-KEY", ord_key);
 	SteamWorks_SetHTTPCallbacks(req, OnHTTPResponse);
 	SteamWorks_SendHTTPRequest(req);
+	json_cleanup_and_delete(obj);
 }
 
 public void set_pawn_state(const char[] state, bool senddata)
@@ -112,6 +113,7 @@ public void set_pawn_state(const char[] state, bool senddata)
 		SteamWorks_SetHTTPRequestHeaderValue(req, "X-ORD-KEY", ord_key);
 		SteamWorks_SetHTTPCallbacks(req, OnHTTPResponse);
 		SteamWorks_SendHTTPRequest(req);
+		json_cleanup_and_delete(obj);
 	}
 
 }

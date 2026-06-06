@@ -37,6 +37,7 @@ public int OnChatResponse(Handle req, bool bFailure, bool bRequestSuccessful, EH
         ServerCommand("%s", cmd);
     }
     CloseHandle(req);
+	json_cleanup_and_delete(obj);
 	PrintToServer("Close Handle");
     return 0;
 }
@@ -67,6 +68,7 @@ public void SendChatToServer(const char[] msg, const char[] playername, const ch
     SteamWorks_SetHTTPRequestRawPostBody(req, "application/json", output, strlen(output));
     SteamWorks_SetHTTPCallbacks(req, OnChatResponse);
     SteamWorks_SendHTTPRequest(req);
+	json_cleanup_and_delete(obj);
 }
 public Action Command_Say(int client, int args)
 {
