@@ -21,7 +21,7 @@ public Plugin myinfo =
 	name = "ordinance",
 	author = "TheRedEnemy",
 	description = "",
-	version = "6.1.0",
+	version = "6.1.2",
 	url = "https://github.com/theredenemy/ordinance"
 };
 
@@ -58,12 +58,21 @@ public void OnPluginStart()
 	RegConsoleCmd("say", Command_Say);
 	RegConsoleCmd("say_team", Command_Say);
 	SetConVarFlags(g_ordinance_enabled, FCVAR_NOTIFY);
+	SetConVarFlags(g_ord_key, FCVAR_PROTECTED & FCVAR_NOTIFY);
+	SetConVarFlags(g_ordinance_server, FCVAR_NOTIFY);
 	LogMessage("LOADING ITEMS_GAME.TXT...");
 	if (!g_KvItems.ImportFromFile("scripts/items/items_game.txt"))
 		{
 			SetFailState("ITEMS_GAME.TXT FAILED TO LOAD");
 		}
 	PrintToServer("ordinance Has Loaded");
+}
+public void OnPluginEnd()
+{
+	LogMessage("UNLOADING ITEMS_GAME.TXT...");
+	delete g_KvItems;
+	PrintToServer("BYEBYE");
+
 }
 public void SendPlayerData(int client)
 {
