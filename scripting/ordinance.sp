@@ -21,13 +21,14 @@ public Plugin myinfo =
 	name = "ordinance",
 	author = "TheRedEnemy",
 	description = "",
-	version = "6.1.2",
+	version = "6.1.3",
 	url = "https://github.com/theredenemy/ordinance"
 };
 
 #include <submit_pawn/submit_pawn.sp>
 #include <ordinance_controller/ordinance_controller.sp>
 #include <chatbot/chatbot.sp>
+#include <play/play.sp>
 
 
 public void OnPluginStart()
