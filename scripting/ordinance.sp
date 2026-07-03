@@ -21,7 +21,7 @@ public Plugin myinfo =
 	name = "ordinance",
 	author = "TheRedEnemy",
 	description = "",
-	version = "6.1.5",
+	version = "7.0.0",
 	url = "https://github.com/theredenemy/ordinance"
 };
 
@@ -101,7 +101,51 @@ public void SendPlayerData(int client)
 	SteamWorks_SendHTTPRequest(req);
 	json_cleanup_and_delete(obj);
 }
+public void EnterOrdPlay()
+{
+	char validChars[] = "qwertyuiopasdfghjklzxcvbnm";
+	char password[16];
+	char playername[MAX_NAME_LENGTH];
+	int[] clients = new int[MaxClients + 1];
+	int count = 0;
 
+	for (int i = 0; i < sizeof(password) - 1; i++)
+	{
+		int randomindex = GetRandomInt(0, strlen(validChars) - 1);
+		password[i] = validChars[randomindex];
+	}
+	PrintToServer("PASSWORD: %s", password);
+	SetConVarString(FindConVar("sv_password"), password);
+
+	for (int i = 1; i <= MaxClients; i++)
+	{
+		if (IsClientInGame(i) && !IsClientSourceTV(i) && i != 0)
+		{
+			clients[count] = i;
+			count++;
+		}
+	}
+	if (count >> 1)
+	{
+		int randomclient = GetRandomInt(0, count - 1);
+		GetClientName(randomclient, playername, sizeof(playername));
+		PrintToServer("PLAYER: %s", playername);
+		for (int i = 1; i <= MaxClients; i++)
+		{
+			if (IsClientInGame(i) && !IsClientSourceTV(i))
+			{
+				GetClientName(i, playername, sizeof(playername));
+				PrintToServer(playername);
+				if (i != randomclient)
+				{
+					KickClient(i, "ORD_PLAY AUTO_KICK");
+				}
+			}
+		}
+	}
+	
+	return;
+}
 public void OnClientPutInServer(int client)
 {
 	SDKHook(client, SDKHook_WeaponSwitchPost, WeaponSwitchPostCheck);
@@ -152,6 +196,11 @@ public Action WeaponSwitchPostCheck(int client, int weapon)
 		return Plugin_Continue;
 	}
 	
+}
+public Action OrdPlayEnter_timer(Handle timer)
+{
+	EnterOrdPlay();
+	return Plugin_Continue;
 }
 public Action OrdError(Handle timer)
 {
@@ -291,6 +340,7 @@ public void OnMapStart()
 	int ordinance_enabled = GetConVarInt(g_ordinance_enabled);
 	GetConVarString(g_ordinance_server, ord_server, sizeof(ord_server));
 	g_hit_vul_door = false;
+	g_spray = false;
 	g_mapname = "\0";
 	GetCurrentMap(g_mapname, sizeof(g_mapname));
 	if (StrEqual(g_mapname, "ord_error", false))
@@ -342,5 +392,9 @@ public void OnMapStart()
 			return;
 		}
 		
+	}
+	if (StrEqual(g_mapname, "ord_play", false))
+	{
+		CreateTimer(20.0, OrdPlayEnter_timer);
 	}
 }

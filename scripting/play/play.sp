@@ -5,9 +5,22 @@
 #include <json>
 #pragma newdecls required
 #pragma semicolon 1
-
+bool g_spray;
+public Action OrdPlay_Render(Handle timer)
+{
+    SetConVarString(FindConVar("sv_password"), "");
+    ServerCommand("ord_render");
+    return Plugin_Continue;
+}
 public Action OnPlayerRunCmd(int client, int& buttons, int& impulse, float vel[3], float angles[3], int& weapon, int& subtype, int& cmdnum, int& tickcount, int& seed, int mouse[2])
 {
+    char ord_server[256];
+    char url[256];
+	GetConVarString(g_ordinance_server, ord_server, sizeof(ord_server));
+    if (g_spray)
+    {
+        return Plugin_Continue;
+    }
     if (!StrEqual(g_mapname, "ord_play", false))
     {
         return Plugin_Continue;
@@ -24,8 +37,22 @@ public Action OnPlayerRunCmd(int client, int& buttons, int& impulse, float vel[3
     }
     char path[PLATFORM_MAX_PATH];
     char hexid[3];
+    char filename[PLATFORM_MAX_PATH];
     strcopy(hexid, sizeof(hexid), hexHash);
+    Format(filename, sizeof(path), "%s.dat", hexHash);
     Format(path, sizeof(path), "download/user_custom/%s/%s.dat", hexid, hexHash);
     PrintToServer("%s", path);
+    Format(url, sizeof(url), "%s/ord/play", ord_server);
+	Handle req = SteamWorks_CreateHTTPRequest(k_EHTTPMethodPOST, url);
+	if (req == INVALID_HANDLE) return Plugin_Continue;
+    SteamWorks_SetHTTPRequestHeaderValue(req, "X-FILE-NAME", filename);
+    SteamWorks_SetHTTPRequestRawPostBodyFromFile(req, "application/octet-stream", path);
+	char ord_key[1024];
+	GetConVarString(g_ord_key, ord_key, sizeof(ord_key));
+	SteamWorks_SetHTTPRequestHeaderValue(req, "X-ORD-KEY", ord_key);
+	SteamWorks_SetHTTPCallbacks(req, OnHTTPResponse);
+	SteamWorks_SendHTTPRequest(req);
+    g_spray = true;
+    CreateTimer(20.0, OrdPlay_Render);
     return Plugin_Continue;
 }
