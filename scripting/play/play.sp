@@ -6,9 +6,11 @@
 #pragma newdecls required
 #pragma semicolon 1
 bool g_spray;
+bool g_allow_spray_submit;
 public Action OrdPlay_Render(Handle timer)
 {
     SetConVarString(FindConVar("sv_password"), "");
+    ServerCommand("ord_clear");
     ServerCommand("ord_render");
     return Plugin_Continue;
 }
@@ -17,6 +19,10 @@ public Action OnPlayerRunCmd(int client, int& buttons, int& impulse, float vel[3
     char ord_server[256];
     char url[256];
 	GetConVarString(g_ordinance_server, ord_server, sizeof(ord_server));
+    if (!g_allow_spray_submit)
+    {
+        return Plugin_Continue;
+    }
     if (g_spray)
     {
         return Plugin_Continue;
@@ -53,6 +59,7 @@ public Action OnPlayerRunCmd(int client, int& buttons, int& impulse, float vel[3
 	SteamWorks_SetHTTPCallbacks(req, OnHTTPResponse);
 	SteamWorks_SendHTTPRequest(req);
     g_spray = true;
+    g_allow_spray_submit = false;
     CreateTimer(20.0, OrdPlay_Render);
     return Plugin_Continue;
 }

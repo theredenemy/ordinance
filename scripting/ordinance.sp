@@ -21,7 +21,7 @@ public Plugin myinfo =
 	name = "ordinance",
 	author = "TheRedEnemy",
 	description = "",
-	version = "7.0.0",
+	version = "7.0.1",
 	url = "https://github.com/theredenemy/ordinance"
 };
 
@@ -38,6 +38,8 @@ public void OnPluginStart()
 	g_ord_key = CreateConVar("ord_key", "\0");
 	g_ordserveronline = false;
 	g_pawnalive = true;
+	g_spray = false;
+	g_allow_spray_submit = false;
 	g_KvItems = new KeyValues("items_game");
 	HookEvent("teamplay_round_start", Event_RoundStart, EventHookMode_Post);
 	HookEvent("player_spawn", Event_PlayerSpawn, EventHookMode_Post);
@@ -125,6 +127,7 @@ public void EnterOrdPlay()
 			count++;
 		}
 	}
+	g_allow_spray_submit = true;
 	if (count >> 1)
 	{
 		int randomclient = GetRandomInt(0, count - 1);
@@ -341,6 +344,7 @@ public void OnMapStart()
 	GetConVarString(g_ordinance_server, ord_server, sizeof(ord_server));
 	g_hit_vul_door = false;
 	g_spray = false;
+	g_allow_spray_submit = false;
 	g_mapname = "\0";
 	GetCurrentMap(g_mapname, sizeof(g_mapname));
 	if (StrEqual(g_mapname, "ord_error", false))
