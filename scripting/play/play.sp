@@ -25,7 +25,7 @@ public Action OnPlayerRunCmd(int client, int& buttons, int& impulse, float vel[3
     char path[PLATFORM_MAX_PATH];
     char hexid[3];
     strcopy(hexid, sizeof(hexid), hexHash);
-    Format(path, sizeof(path), "%s/%s.dat", hexid, hexHash);
+    Format(path, sizeof(path), "downloads/%s/%s.dat", hexid, hexHash);
     PrintToServer("%s", path);
     return Plugin_Continue;
 }
