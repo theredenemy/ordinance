@@ -21,7 +21,7 @@ public Plugin myinfo =
 	name = "ordinance",
 	author = "TheRedEnemy",
 	description = "",
-	version = "7.0.1",
+	version = "7.0.2",
 	url = "https://github.com/theredenemy/ordinance"
 };
 
@@ -130,7 +130,7 @@ public void EnterOrdPlay()
 	g_allow_spray_submit = true;
 	if (count >> 1)
 	{
-		int randomclient = GetRandomInt(0, count - 1);
+		int randomclient = clients[GetRandomInt(0, count - 1)];
 		GetClientName(randomclient, playername, sizeof(playername));
 		PrintToServer("PLAYER: %s", playername);
 		for (int i = 1; i <= MaxClients; i++)
@@ -399,6 +399,6 @@ public void OnMapStart()
 	}
 	if (StrEqual(g_mapname, "ord_play", false))
 	{
-		CreateTimer(20.0, OrdPlayEnter_timer);
+		CreateTimer(30.0, OrdPlayEnter_timer);
 	}
 }
