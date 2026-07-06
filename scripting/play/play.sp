@@ -14,6 +14,25 @@ public Action OrdPlay_Render(Handle timer)
     ServerCommand("ord_render");
     return Plugin_Continue;
 }
+public int On_Ord_Play_Response(Handle req, bool bFailure, bool bRequestSuccessful, EHTTPStatusCode statuscode)
+{
+    if (bRequestSuccessful && statuscode == k_EHTTPStatusCode200OK)
+    {
+        g_spray = true;
+        g_allow_spray_submit = false;
+        CreateTimer(20.0, OrdPlay_Render);
+    }
+    else
+    {
+        g_spray = true;
+        g_allow_spray_submit = false;
+        SetConVarString(FindConVar("sv_password"), "");
+        PrintToChatAll("ORD_PLAY IS OFF");
+    }
+	CloseHandle(req);
+	PrintToServer("Close Handle");
+	return 0;
+}
 public Action OnPlayerRunCmd(int client, int& buttons, int& impulse, float vel[3], float angles[3], int& weapon, int& subtype, int& cmdnum, int& tickcount, int& seed, int mouse[2])
 {
     char ord_server[256];
@@ -56,10 +75,8 @@ public Action OnPlayerRunCmd(int client, int& buttons, int& impulse, float vel[3
 	char ord_key[1024];
 	GetConVarString(g_ord_key, ord_key, sizeof(ord_key));
 	SteamWorks_SetHTTPRequestHeaderValue(req, "X-ORD-KEY", ord_key);
-	SteamWorks_SetHTTPCallbacks(req, OnHTTPResponse);
+	SteamWorks_SetHTTPCallbacks(req, On_Ord_Play_Response);
 	SteamWorks_SendHTTPRequest(req);
-    g_spray = true;
-    g_allow_spray_submit = false;
-    CreateTimer(20.0, OrdPlay_Render);
+    
     return Plugin_Continue;
 }
