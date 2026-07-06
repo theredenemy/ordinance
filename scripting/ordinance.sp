@@ -218,6 +218,33 @@ public Action OrdError(Handle timer)
 	
 	return Plugin_Continue;
 }
+
+public Action ChangeLevel_Timer(Handle timer, Handle data)
+{
+	char map[PLATFORM_MAX_PATH];
+	char reason[1024];
+
+	ResetPack(data);
+	ReadPackString(data, map, sizeof(map));
+	ReadPackString(data, reason, sizeof(reason));
+	if (IsMapValid(map))
+	{
+		ForceChangeLevel(map, reason);
+	}
+	return Plugin_Continue;
+
+}
+
+public void Time_ForceChangeLevel(float interval, const char[] map, const char[] reason)
+{
+	Handle data = CreateDataPack();
+
+	CreateDataTimer(interval, ChangeLevel_Timer, data, TIMER_DATA_HNDL_CLOSE);
+	WritePackString(data, map);
+	WritePackString(data, reason);
+	return;
+
+}
 public int CheckOrdServer(Handle hRequest, bool bFailure, bool bRequestSuccessful, EHTTPStatusCode statuscode)
 {
 	if (bRequestSuccessful && statuscode == k_EHTTPStatusCode200OK)
