@@ -28,6 +28,7 @@ public int On_Ord_Play_Response(Handle req, bool bFailure, bool bRequestSuccessf
         g_allow_spray_submit = false;
         SetConVarString(FindConVar("sv_password"), "");
         PrintToChatAll("ORD_PLAY IS OFF");
+        Time_ForceChangeLevel(10.0, "server_error", "SERVER_ERROR");
     }
 	CloseHandle(req);
 	PrintToServer("Close Handle");
