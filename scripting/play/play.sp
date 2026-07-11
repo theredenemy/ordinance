@@ -10,7 +10,8 @@ bool g_allow_spray_submit;
 public Action OrdPlay_Render(Handle timer)
 {
     SetConVarString(FindConVar("sv_password"), "");
-    ServerCommand("ord_clear");
+    SendInput("BEGIN");
+    // ServerCommand("ord_clear");
     ServerCommand("ord_render");
     return Plugin_Continue;
 }
