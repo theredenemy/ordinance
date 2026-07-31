@@ -21,7 +21,7 @@ public Plugin myinfo =
 	name = "ordinance",
 	author = "TheRedEnemy",
 	description = "",
-	version = "7.1.1",
+	version = "8.0.0",
 	url = "https://github.com/theredenemy/ordinance"
 };
 
@@ -68,6 +68,7 @@ public void OnPluginStart()
 		{
 			SetFailState("ITEMS_GAME.TXT FAILED TO LOAD");
 		}
+	CreateTimer(20.0, CheckOrd_Server_timer, _, TIMER_REPEAT);
 	PrintToServer("ordinance Has Loaded");
 }
 public void OnPluginEnd()
@@ -258,6 +259,7 @@ public int CheckOrdServer(Handle hRequest, bool bFailure, bool bRequestSuccessfu
 		
 		g_ordserveronline = true;
 		
+		
 		if (StrEqual(g_mapname, "ordinance", false))
 		{
 			SendInput("BEGIN");
@@ -361,6 +363,55 @@ void makePawnConfig()
 		kv.ExportToFile(path2);
 		delete kv;
 	}
+}
+public int CheckOrdServer_OnTimer(Handle hRequest, bool bFailure, bool bRequestSuccessful, EHTTPStatusCode statuscode)
+{
+	if (bRequestSuccessful && statuscode != k_EHTTPStatusCode200OK && g_ordserveronline)
+	{
+		char sound[] = "common/bugreporter_failed.wav";
+		PrecacheSound(sound, true);
+		PrintToChatAll("ORD SERVER IS NOW OFFLINE");
+		EmitSoundToAll(sound);
+		g_ordserveronline = false;
+		
+		CloseHandle(hRequest);
+		//PrintToServer("Close Handle");
+		return 0;
+	}
+	else if(bRequestSuccessful && statuscode == k_EHTTPStatusCode200OK && !g_ordserveronline)
+	{
+		g_ordserveronline = true;
+		char sound[] = "friends/friend_online.wav";
+		PrecacheSound(sound, true);
+		PrintToChatAll("ORD SERVER IS NOW ONLINE Reloading Level.");
+		EmitSoundToAll(sound);
+		Time_ForceChangeLevel(10.0, g_mapname, "ORDSERVER_ONLINE");
+		CloseHandle(hRequest);
+		//PrintToServer("Close Handle");
+		
+		return 0;	
+	}
+	else
+	{
+		CloseHandle(hRequest);
+		//PrintToServer("Close Handle");
+		return 0;
+	}
+
+}
+public Action CheckOrd_Server_timer(Handle timer)
+{
+	char url[256];
+	char ord_server[256];
+	GetConVarString(g_ordinance_server, ord_server, sizeof(ord_server));
+	Format(url, sizeof(url), "%s/ord/info", ord_server);
+	Handle hRequest = SteamWorks_CreateHTTPRequest(k_EHTTPMethodGET, url);
+	char ord_key[1024];
+	GetConVarString(g_ord_key, ord_key, sizeof(ord_key));
+	SteamWorks_SetHTTPRequestHeaderValue(hRequest, "X-ORD-KEY", ord_key);
+	SteamWorks_SetHTTPCallbacks(hRequest, CheckOrdServer_OnTimer);
+	SteamWorks_SendHTTPRequest(hRequest);
+	return Plugin_Continue;
 }
 public void OnMapStart()
 {
