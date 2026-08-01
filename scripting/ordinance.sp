@@ -22,7 +22,7 @@ public Plugin myinfo =
 	name = "ordinance",
 	author = "TheRedEnemy",
 	description = "",
-	version = "9.0.0",
+	version = "9.0.1",
 	url = "https://github.com/theredenemy/ordinance"
 };
 
@@ -373,10 +373,14 @@ public int CheckOrdServer_OnTimer(Handle hRequest, bool bFailure, bool bRequestS
 
 	if (bFailure || !bRequestSuccessful || statuscode != k_EHTTPStatusCode200OK)
 	{
-		char sound[] = "common/bugreporter_failed.wav";
-		PrecacheSound(sound, true);
-		PrintToChatAll("ORD SERVER IS NOW OFFLINE");
-		EmitSoundToAll(sound);
+		// Forgot To Write This Before Release
+		if (g_ordserveronline)
+		{
+			char sound[] = "common/bugreporter_failed.wav";
+			PrecacheSound(sound, true);
+			PrintToChatAll("ORD SERVER IS NOW OFFLINE");
+			EmitSoundToAll(sound);
+		}
 		g_ordserveronline = false;
 		CloseHandle(hRequest);
 		PrintToServer("Close Handle");
