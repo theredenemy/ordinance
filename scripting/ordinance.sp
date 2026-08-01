@@ -15,13 +15,14 @@ bool g_ordserveronline;
 bool g_pawnalive;
 char g_mapname[128];
 char g_last_weapon[MAXPLAYERS+1][128];
+int g_ord_server_start_timestamp = 0;
 KeyValues g_KvItems;
 public Plugin myinfo =
 {
 	name = "ordinance",
 	author = "TheRedEnemy",
 	description = "",
-	version = "8.0.1",
+	version = "9.0.0",
 	url = "https://github.com/theredenemy/ordinance"
 };
 
@@ -298,6 +299,7 @@ public int CheckOrdServer(Handle hRequest, bool bFailure, bool bRequestSuccessfu
 		SteamWorks_GetHTTPResponseBodyData(hRequest, data, HTTP_BodySize);
 		JSON_Object obj = json_decode(data);
 		obj.GetString("state", state, sizeof(state));
+		g_ord_server_start_timestamp = obj.GetInt("server_start_timestamp");
 		
 		
 		json_cleanup_and_delete(obj);
@@ -366,19 +368,35 @@ void makePawnConfig()
 }
 public int CheckOrdServer_OnTimer(Handle hRequest, bool bFailure, bool bRequestSuccessful, EHTTPStatusCode statuscode)
 {
-	if (bRequestSuccessful && statuscode != k_EHTTPStatusCode200OK && g_ordserveronline)
+	// Rewrote this
+	char data[1024];
+
+	if (bFailure || !bRequestSuccessful || statuscode != k_EHTTPStatusCode200OK)
 	{
 		char sound[] = "common/bugreporter_failed.wav";
 		PrecacheSound(sound, true);
 		PrintToChatAll("ORD SERVER IS NOW OFFLINE");
 		EmitSoundToAll(sound);
 		g_ordserveronline = false;
-		
 		CloseHandle(hRequest);
-		//PrintToServer("Close Handle");
+		PrintToServer("Close Handle");
 		return 0;
 	}
-	else if(bRequestSuccessful && statuscode == k_EHTTPStatusCode200OK && !g_ordserveronline)
+	int HTTP_BodySize = 0;
+
+	if (!SteamWorks_GetHTTPResponseBodySize(hRequest, HTTP_BodySize) || HTTP_BodySize <= 0)
+	{
+		PrintToServer("Response Is Empty or failed to read size");
+		CloneHandle(hRequest);
+		PrintToServer("Close Handle");
+		return 0;
+	}
+	
+	SteamWorks_GetHTTPResponseBodyData(hRequest, data, HTTP_BodySize);
+	JSON_Object obj = json_decode(data);
+	int ord_server_start_timestamp = obj.GetInt("server_start_timestamp");
+	json_cleanup_and_delete(obj);
+	if (!g_ordserveronline || g_ord_server_start_timestamp != ord_server_start_timestamp)
 	{
 		g_ordserveronline = true;
 		char sound[] = "friends/friend_online.wav";
@@ -386,18 +404,11 @@ public int CheckOrdServer_OnTimer(Handle hRequest, bool bFailure, bool bRequestS
 		PrintToChatAll("ORD SERVER IS NOW ONLINE Reloading Level.");
 		EmitSoundToAll(sound);
 		Time_ForceChangeLevel(10.0, g_mapname, "ORDSERVER_ONLINE");
-		CloseHandle(hRequest);
-		//PrintToServer("Close Handle");
-		
-		return 0;	
+			
 	}
-	else
-	{
-		CloseHandle(hRequest);
-		//PrintToServer("Close Handle");
-		return 0;
-	}
-
+	CloseHandle(hRequest);
+	//PrintToServer("Close Handle");
+	return 0;
 }
 public Action CheckOrd_Server_timer(Handle timer)
 {
