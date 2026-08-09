@@ -23,7 +23,7 @@ public Plugin myinfo =
 	name = "ordinance",
 	author = "TheRedEnemy",
 	description = "",
-	version = "9.1.0",
+	version = "9.1.1",
 	url = "https://github.com/theredenemy/ordinance"
 };
 
@@ -91,6 +91,8 @@ public void OnPluginEnd()
 {
 	LogMessage("UNLOADING ITEMS_GAME.TXT...");
 	delete g_KvItems;
+	LogMessage("CLEAR ORD SERVER PLAYER LIST");
+	ClearOrdServerPlayersList();
 	PrintToServer("BYEBYE");
 
 }
