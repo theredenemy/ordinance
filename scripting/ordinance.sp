@@ -38,7 +38,7 @@ public void OnPluginStart()
 	g_triggername = CreateConVar("pawn_trigger", "\0");
 	g_autokick = CreateConVar("pawn_autokick", "0");
 	g_ord_key = CreateConVar("ord_key", "\0");
-	g_auto_ord_func_level_change = CreateConVar("auto_ord_func_level_change", "1");
+	g_auto_ord_func_level_change = CreateConVar("auto_ord_func_level_change", "0");
 	g_ordserveronline = false;
 	g_pawnalive = true;
 	g_spray = false;
