@@ -23,7 +23,7 @@ public Plugin myinfo =
 	name = "ordinance",
 	author = "TheRedEnemy",
 	description = "",
-	version = "9.1.1",
+	version = "9.2.0",
 	url = "https://github.com/theredenemy/ordinance"
 };
 
@@ -75,15 +75,9 @@ public void OnPluginStart()
 	{
 		LogMessage("LOADED ITEMS_GAME.TXT!");
 	}
-	ClearOrdServerPlayersList();
-	for (int i = 1; i <= MaxClients; i++)
-	{
-		if (IsClientInGame(i))
-		{
-			SendPlayerData(i);
-		}
-		
-	}
+	PrintToServer("LOCK SERVER");
+	LockServer();
+	CreateTimer(10.0, Start_Server);
 	CreateTimer(20.0, CheckOrd_Server_timer, _, TIMER_REPEAT);
 	PrintToServer("ordinance Has Loaded");
 }
@@ -95,6 +89,21 @@ public void OnPluginEnd()
 	ClearOrdServerPlayersList();
 	PrintToServer("BYEBYE");
 
+}
+public Action Start_Server(Handle timer)
+{
+	ClearOrdServerPlayersList();
+	for (int i = 1; i <= MaxClients; i++)
+	{
+		if (IsClientInGame(i))
+		{
+			SendPlayerData(i);
+		}
+		
+	}
+	PrintToServer("UNLOCK SERVER");
+	SetConVarString(FindConVar("sv_password"), "");
+	return Plugin_Continue;
 }
 public void ClearOrdServerPlayersList()
 {
@@ -135,14 +144,10 @@ public void SendPlayerData(int client)
 	SteamWorks_SendHTTPRequest(req);
 	json_cleanup_and_delete(obj);
 }
-public void EnterOrdPlay()
+public void LockServer()
 {
 	char validChars[] = "qwertyuiopasdfghjklzxcvbnm";
 	char password[16];
-	char playername[MAX_NAME_LENGTH];
-	int[] clients = new int[MaxClients + 1];
-	int count = 0;
-
 	for (int i = 0; i < sizeof(password) - 1; i++)
 	{
 		int randomindex = GetRandomInt(0, strlen(validChars) - 1);
@@ -150,6 +155,16 @@ public void EnterOrdPlay()
 	}
 	PrintToServer("PASSWORD: %s", password);
 	SetConVarString(FindConVar("sv_password"), password);
+}
+	
+public void EnterOrdPlay()
+{
+	
+	char playername[MAX_NAME_LENGTH];
+	int[] clients = new int[MaxClients + 1];
+	int count = 0;
+
+	LockServer();
 
 	for (int i = 1; i <= MaxClients; i++)
 	{

@@ -12,7 +12,7 @@ public Action OrdPlay_Render(Handle timer)
     SetConVarString(FindConVar("sv_password"), "");
     SendInput("BEGIN");
     // ServerCommand("ord_clear");
-    ServerCommand("ord_render");
+    ServerCommand("exec ord_r");
     return Plugin_Continue;
 }
 public int On_Ord_Play_Response(Handle req, bool bFailure, bool bRequestSuccessful, EHTTPStatusCode statuscode)
