@@ -213,6 +213,7 @@ public Action ord_input_command(int args)
     char full[256];
 	char map[256];
 	int ordinance_enabled = GetConVarInt(g_ordinance_enabled);
+	int auto_ord_func_level_change = GetConVarInt(g_auto_ord_func_level_change);
 	if (args > 1)
 	{
 		PrintToServer("ONLY ONE INPUT AT A TIME");
@@ -240,19 +241,23 @@ public Action ord_input_command(int args)
     GetCmdArgString(full, sizeof(full));
 	
 	GetCmdArg(1, arg, sizeof(arg));
-	Format(map, sizeof(map), "ord_%sfunc", arg);
-	PrintToServer(map);
-	PrintToChatAll(arg);
-	if (IsMapValid(map))
+	SendInput(arg);
+	if (auto_ord_func_level_change == 1)
 	{
-		SendInput(arg);
-		ForceChangeLevel(map, "INPUT MADE");
+		Format(map, sizeof(map), "ord_%sfunc", arg);
+		PrintToServer(map);
+		PrintToChatAll(arg);
+		if (IsMapValid(map))
+		{
+			ForceChangeLevel(map, "INPUT MADE");
+		}
+		else
+		{
+			ForceChangeLevel("cp_dustbowl", "INVAILD INPUT");
+			return Plugin_Handled;
+		}
 	}
-	else
-	{
-		ForceChangeLevel("cp_dustbowl", "INVAILD INPUT");
-		return Plugin_Handled;
-	}
+	
 	
 	
 	return Plugin_Handled;
@@ -264,6 +269,7 @@ public Action ord_render_command(int args)
 	int ordinance_enabled = GetConVarInt(g_ordinance_enabled);
 	char url[256];
 	char ord_server[256];
+	int auto_ord_func_level_change = GetConVarInt(g_auto_ord_func_level_change);
 	GetConVarString(g_ordinance_server, ord_server, sizeof(ord_server));
 	if (IsMapValid("ord_ren"))
 	{
@@ -278,7 +284,11 @@ public Action ord_render_command(int args)
 			SteamWorks_SetHTTPCallbacks(req, OnRenderResponse);
 			SteamWorks_SendHTTPRequest(req);
 		}
-		ForceChangeLevel("ord_ren", "RENDER");
+		if (auto_ord_func_level_change == 1)
+		{
+			ForceChangeLevel("ord_ren", "RENDER");
+		}
+		
 		return Plugin_Handled;
 	}
 	else

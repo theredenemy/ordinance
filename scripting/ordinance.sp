@@ -11,6 +11,7 @@ ConVar g_ordinance_enabled;
 #define PAWN_STATE_FILE "pawn_state.txt"
 ConVar g_ordinance_server;
 ConVar g_ord_key;
+ConVar g_auto_ord_func_level_change;
 bool g_ordserveronline;
 bool g_pawnalive;
 char g_mapname[128];
@@ -22,7 +23,7 @@ public Plugin myinfo =
 	name = "ordinance",
 	author = "TheRedEnemy",
 	description = "",
-	version = "9.0.1",
+	version = "9.1.0",
 	url = "https://github.com/theredenemy/ordinance"
 };
 
@@ -37,6 +38,7 @@ public void OnPluginStart()
 	g_triggername = CreateConVar("pawn_trigger", "\0");
 	g_autokick = CreateConVar("pawn_autokick", "0");
 	g_ord_key = CreateConVar("ord_key", "\0");
+	g_auto_ord_func_level_change = CreateConVar("auto_ord_func_level_change", "1");
 	g_ordserveronline = false;
 	g_pawnalive = true;
 	g_spray = false;
@@ -66,9 +68,18 @@ public void OnPluginStart()
 	SetConVarFlags(g_ordinance_server, FCVAR_NOTIFY);
 	LogMessage("LOADING ITEMS_GAME.TXT...");
 	if (!g_KvItems.ImportFromFile("scripts/items/items_game.txt"))
-		{
-			SetFailState("ITEMS_GAME.TXT FAILED TO LOAD");
-		}
+	{
+		SetFailState("ITEMS_GAME.TXT FAILED TO LOAD");
+	}
+	else
+	{
+		LogMessage("LOADED ITEMS_GAME.TXT!");
+	}
+	ClearOrdServerPlayersList();
+	for (int i = 1; i <= MaxClients; i++)
+	{
+		SendPlayerData(i);
+	}
 	CreateTimer(20.0, CheckOrd_Server_timer, _, TIMER_REPEAT);
 	PrintToServer("ordinance Has Loaded");
 }
@@ -78,6 +89,19 @@ public void OnPluginEnd()
 	delete g_KvItems;
 	PrintToServer("BYEBYE");
 
+}
+public void ClearOrdServerPlayersList()
+{
+	char url[256];
+	char ord_server[256];
+	GetConVarString(g_ordinance_server, ord_server, sizeof(ord_server));
+	Format(url, sizeof(url), "%s/ord/players/api/clear", ord_server);
+	Handle hRequest = SteamWorks_CreateHTTPRequest(k_EHTTPMethodGET, url);
+	char ord_key[1024];
+	GetConVarString(g_ord_key, ord_key, sizeof(ord_key));
+	SteamWorks_SetHTTPRequestHeaderValue(hRequest, "X-ORD-KEY", ord_key);
+	SteamWorks_SetHTTPCallbacks(hRequest, OnHTTPResponse);
+	SteamWorks_SendHTTPRequest(hRequest);
 }
 public void SendPlayerData(int client)
 {
@@ -93,7 +117,7 @@ public void SendPlayerData(int client)
 	obj.SetString("player", playername);
 	obj.SetString("steamid", playersteamid);
 	obj.Encode(output, sizeof(output));
-	Format(url, sizeof(url), "%s/getdata", ord_server);
+	Format(url, sizeof(url), "%s/ord/players/api/senddata", ord_server);
 	Handle req = SteamWorks_CreateHTTPRequest(k_EHTTPMethodPOST, url);
 	if (req == INVALID_HANDLE) return;
 	SteamWorks_SetHTTPRequestHeaderValue(req, "Content-Type", "application/json");
