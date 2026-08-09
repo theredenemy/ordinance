@@ -78,7 +78,11 @@ public void OnPluginStart()
 	ClearOrdServerPlayersList();
 	for (int i = 1; i <= MaxClients; i++)
 	{
-		SendPlayerData(i);
+		if (IsClientInGame(i))
+		{
+			SendPlayerData(i);
+		}
+		
 	}
 	CreateTimer(20.0, CheckOrd_Server_timer, _, TIMER_REPEAT);
 	PrintToServer("ordinance Has Loaded");
