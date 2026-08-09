@@ -23,7 +23,7 @@ public Plugin myinfo =
 	name = "ordinance",
 	author = "TheRedEnemy",
 	description = "",
-	version = "9.2.0",
+	version = "9.2.1",
 	url = "https://github.com/theredenemy/ordinance"
 };
 
@@ -448,6 +448,7 @@ public int CheckOrdServer_OnTimer(Handle hRequest, bool bFailure, bool bRequestS
 	if (!g_ordserveronline || g_ord_server_start_timestamp != ord_server_start_timestamp)
 	{
 		g_ordserveronline = true;
+		g_ord_server_start_timestamp = ord_server_start_timestamp;
 		char sound[] = "friends/friend_online.wav";
 		PrecacheSound(sound, true);
 		PrintToChatAll("ORD SERVER IS NOW ONLINE Reloading Level.");
