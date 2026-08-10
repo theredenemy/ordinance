@@ -11,9 +11,11 @@
 
 public Action OrdEnd(Handle timer)
 {
-	if (IsMapValid("ord_end"))
+	char ord_end_level[PLATFORM_MAX_PATH];
+	GetConVarString(g_ord_end_level, ord_end_level, sizeof(ord_end_level));
+	if (IsMapValid(ord_end_level))
 	{
-		ForceChangeLevel("ord_end", "NO INPUT");
+		ForceChangeLevel(ord_end_level, "NO INPUT");
 	}
 	else
 	{
@@ -211,9 +213,11 @@ public Action ord_input_command(int args)
 {
 	char arg[MAX_INPUT_LEN];
     char full[256];
-	char map[256];
+	char map[PLATFORM_MAX_PATH];
 	int ordinance_enabled = GetConVarInt(g_ordinance_enabled);
 	int auto_ord_func_level_change = GetConVarInt(g_auto_ord_func_level_change);
+	char ord_end_level[PLATFORM_MAX_PATH];
+	GetConVarString(g_ord_end_level, ord_end_level, sizeof(ord_end_level));
 	if (args > 1)
 	{
 		PrintToServer("ONLY ONE INPUT AT A TIME");
@@ -226,9 +230,9 @@ public Action ord_input_command(int args)
 	}
 	if (ordinance_enabled != 1 || !g_ordserveronline || !g_pawnalive)
 	{
-		if (IsMapValid("ord_end"))
+		if (IsMapValid(ord_end_level))
 		{
-			ForceChangeLevel("ord_end", "NO INPUT");
+			ForceChangeLevel(ord_end_level, "NO INPUT");
 			return Plugin_Handled;
 		}
 		else
@@ -244,7 +248,9 @@ public Action ord_input_command(int args)
 	SendInput(arg);
 	if (auto_ord_func_level_change == 1)
 	{
-		Format(map, sizeof(map), "ord_%sfunc", arg);
+		GetConVarString(g_ord_func_template, map, sizeof(map));
+		ReplaceString(map, sizeof(map), "(input)", arg);
+		//Format(map, sizeof(map), "ord_%sfunc", arg);
 		PrintToServer(map);
 		PrintToChatAll(arg);
 		if (IsMapValid(map))
@@ -269,9 +275,10 @@ public Action ord_render_command(int args)
 	int ordinance_enabled = GetConVarInt(g_ordinance_enabled);
 	char url[256];
 	char ord_server[256];
-	int auto_ord_func_level_change = GetConVarInt(g_auto_ord_func_level_change);
+	char ord_render_level[PLATFORM_MAX_PATH];
 	GetConVarString(g_ordinance_server, ord_server, sizeof(ord_server));
-	if (IsMapValid("ord_ren"))
+	GetConVarString(g_ord_render_level, ord_render_level, sizeof(ord_render_level));
+	if (IsMapValid(ord_render_level))
 	{
 		if (ordinance_enabled == 1) 
 		{
@@ -284,10 +291,10 @@ public Action ord_render_command(int args)
 			SteamWorks_SetHTTPCallbacks(req, OnRenderResponse);
 			SteamWorks_SendHTTPRequest(req);
 		}
-		if (auto_ord_func_level_change == 1)
-		{
-			ForceChangeLevel("ord_ren", "RENDER");
-		}
+		
+		
+		ForceChangeLevel(ord_render_level, "RENDER");
+		
 		
 		return Plugin_Handled;
 	}

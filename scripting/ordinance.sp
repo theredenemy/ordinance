@@ -12,6 +12,11 @@ ConVar g_ordinance_enabled;
 ConVar g_ordinance_server;
 ConVar g_ord_key;
 ConVar g_auto_ord_func_level_change;
+ConVar g_ord_render_level;
+ConVar g_ord_func_template;
+ConVar g_ord_end_level;
+ConVar g_server_error_level;
+ConVar g_submit_pawn_level;
 bool g_ordserveronline;
 bool g_pawnalive;
 char g_mapname[128];
@@ -23,7 +28,7 @@ public Plugin myinfo =
 	name = "ordinance",
 	author = "TheRedEnemy",
 	description = "",
-	version = "9.2.1",
+	version = "10.0.0",
 	url = "https://github.com/theredenemy/ordinance"
 };
 
@@ -38,7 +43,12 @@ public void OnPluginStart()
 	g_triggername = CreateConVar("pawn_trigger", "\0");
 	g_autokick = CreateConVar("pawn_autokick", "0");
 	g_ord_key = CreateConVar("ord_key", "\0");
-	g_auto_ord_func_level_change = CreateConVar("auto_ord_func_level_change", "0");
+	g_auto_ord_func_level_change = CreateConVar("auto_ord_func_level_change", "1");
+	g_ord_render_level = CreateConVar("ord_render_level", "ord_ren");
+	g_ord_func_template = CreateConVar("ord_func_template", "ord_(input)func");
+	g_ord_end_level = CreateConVar("ord_end_level", "ord_end");
+	g_server_error_level = CreateConVar("server_error_level", "server_error");
+	g_submit_pawn_level = CreateConVar("submit_pawn_level", "submit_pawn");
 	g_ordserveronline = false;
 	g_pawnalive = true;
 	g_spray = false;

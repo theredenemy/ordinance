@@ -12,7 +12,7 @@ public Action OrdPlay_Render(Handle timer)
     SetConVarString(FindConVar("sv_password"), "");
     SendInput("BEGIN");
     // ServerCommand("ord_clear");
-    ServerCommand("exec ord_r");
+    ServerCommand("ord_render");
     return Plugin_Continue;
 }
 public int On_Ord_Play_Response(Handle req, bool bFailure, bool bRequestSuccessful, EHTTPStatusCode statuscode)
@@ -25,11 +25,13 @@ public int On_Ord_Play_Response(Handle req, bool bFailure, bool bRequestSuccessf
     }
     else
     {
+        char server_error_level[PLATFORM_MAX_PATH];
+	    GetConVarString(g_server_error_level, server_error_level, sizeof(server_error_level));
         g_spray = true;
         g_allow_spray_submit = false;
         SetConVarString(FindConVar("sv_password"), "");
         PrintToChatAll("ORD_PLAY IS OFF");
-        Time_ForceChangeLevel(10.0, "server_error", "SERVER_ERROR");
+        Time_ForceChangeLevel(10.0, server_error_level, "SERVER_ERROR");
     }
 	CloseHandle(req);
 	PrintToServer("Close Handle");

@@ -194,7 +194,9 @@ public Action Event_PlayerSpawn(Event event, const char[] name, bool dontBroadca
 }
 public Action SubmitPawnTimer(Handle timer)
 {
-	ForceChangeLevel("submit_pawn", "SUBMIT");
+	char submit_pawn_level[PLATFORM_MAX_PATH];
+	GetConVarString(g_submit_pawn_level, submit_pawn_level, sizeof(submit_pawn_level));
+	ForceChangeLevel(submit_pawn_level, "SUBMIT");
 	return Plugin_Continue;
 }
 public Action SetPawnState_Timer(Handle timer, Handle data)
@@ -222,6 +224,8 @@ public Action pawn_submit_cmd(int args)
 	int ordinance_enabled = GetConVarInt(g_ordinance_enabled);
 	int timestamp = GetTime();
 	int cmd_len;
+	char server_error_level[PLATFORM_MAX_PATH];
+	GetConVarString(g_server_error_level, server_error_level, sizeof(server_error_level));
 	if (args < 1)
 	{
 		PrintToServer("[SM] Usage: pawn_submit '<cmd>' '<arg>'");
@@ -230,9 +234,9 @@ public Action pawn_submit_cmd(int args)
 	GetCmdArgString(full, sizeof(full));
 	if (!g_ordserveronline || ordinance_enabled != 1)
 		{
-			if (IsMapValid("server_error"))
+			if (IsMapValid(server_error_level))
 			{
-				ForceChangeLevel("server_error", "NO INPUT");
+				ForceChangeLevel(server_error_level, "NO INPUT");
 				return Plugin_Handled;
 			}
 			else
