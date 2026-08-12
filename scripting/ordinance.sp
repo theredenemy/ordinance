@@ -28,7 +28,7 @@ public Plugin myinfo =
 	name = "ordinance",
 	author = "TheRedEnemy",
 	description = "",
-	version = "10.0.0",
+	version = "10.1.0",
 	url = "https://github.com/theredenemy/ordinance"
 };
 
@@ -40,6 +40,7 @@ public Plugin myinfo =
 
 public void OnPluginStart()
 {
+	AutoExecConfig(true);
 	g_triggername = CreateConVar("pawn_trigger", "\0");
 	g_autokick = CreateConVar("pawn_autokick", "0");
 	g_ord_key = CreateConVar("ord_key", "\0");
@@ -49,10 +50,13 @@ public void OnPluginStart()
 	g_ord_end_level = CreateConVar("ord_end_level", "ord_end");
 	g_server_error_level = CreateConVar("server_error_level", "server_error");
 	g_submit_pawn_level = CreateConVar("submit_pawn_level", "submit_pawn");
+	g_ordinance_enabled = CreateConVar("ordinance_enabled", "0");
+	g_ordinance_server = CreateConVar("ordinance_server", "http://127.0.0.1:5000");
 	g_ordserveronline = false;
 	g_pawnalive = true;
 	g_spray = false;
 	g_allow_spray_submit = false;
+	g_ordserveronline = false;
 	g_KvItems = new KeyValues("items_game");
 	HookEvent("teamplay_round_start", Event_RoundStart, EventHookMode_Post);
 	HookEvent("player_spawn", Event_PlayerSpawn, EventHookMode_Post);
@@ -61,9 +65,7 @@ public void OnPluginStart()
 	RegServerCmd("pawn_clear", pawn_clear_cmd);
 	RegServerCmd("vul_text", display_vul_text_cmd);
 	makePawnConfig();
-	g_ordinance_enabled = CreateConVar("ordinance_enabled", "0");
-	g_ordinance_server = CreateConVar("ordinance_server", "http://127.0.0.1:5000");
-	g_ordserveronline = false;
+	
 	RegServerCmd("ord_input", ord_input_command);
 	RegServerCmd("ord_render", ord_render_command);
 	RegServerCmd("ord_clear", ord_clear_command);
@@ -76,6 +78,7 @@ public void OnPluginStart()
 	SetConVarFlags(g_ordinance_enabled, FCVAR_NOTIFY);
 	SetConVarFlags(g_ord_key, FCVAR_PROTECTED & FCVAR_NOTIFY);
 	SetConVarFlags(g_ordinance_server, FCVAR_NOTIFY);
+	SetConVarFlags(g_triggername, FCVAR_DONTRECORD);
 	LogMessage("LOADING ITEMS_GAME.TXT...");
 	if (!g_KvItems.ImportFromFile("scripts/items/items_game.txt"))
 	{
