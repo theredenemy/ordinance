@@ -4,10 +4,25 @@
 #include <SteamWorks>
 #include <json>
 #include <morecolors>
+#include <tf2_stocks>
 
-public int OnChatResponse(Handle req, bool bFailure, bool bRequestSuccessful, EHTTPStatusCode statuscode)
+char playersmsg[MAXPLAYERS+1][256];
+public Action RunCmd_Timer(Handle timer, Handle data)
+{
+	char cmd[256];
+	ResetPack(data);
+	ReadPackString(data, cmd, sizeof(cmd));
+	PrintToServer(cmd);
+    ServerCommand("%s", cmd);
+	return Plugin_Continue;
+}
+public int OnChatResponse(Handle req, bool bFailure, bool bRequestSuccessful, EHTTPStatusCode statuscode, any data1)
 {
 	char data[1024];
+	char playername[MAX_NAME_LENGTH];
+	char sound[] = "friends/message.wav";
+	int client = data1;
+	GetClientName(client, playername, sizeof(playername));
     
 	if (bFailure || !bRequestSuccessful || statuscode != k_EHTTPStatusCode200OK)
 	{
@@ -28,27 +43,36 @@ public int OnChatResponse(Handle req, bool bFailure, bool bRequestSuccessful, EH
 	SteamWorks_GetHTTPResponseBodyData(req, data, HTTP_BodySize);
 	JSON_Object obj = json_decode(data);
 	bool valid = obj.GetBool("valid");
-
+	bool send_msg = obj.GetBool("send")
+	if (send_msg)
+	{
+		CPrintToChatAllEx(client, "{teamcolor}%s\x01 : %s", playername, playersmsg[client]);
+    	PrecacheSound(sound, true);
+		
+		EmitSoundToAll(sound);
+	}
     if (valid)
     {
         char cmd[256];
         obj.GetString("cmd", cmd, sizeof(cmd));
-        PrintToServer(cmd);
-        ServerCommand("%s", cmd);
+		Handle data_pack = CreateDataPack();
+		CreateDataTimer(0.5, RunCmd_Timer, data_pack, TIMER_DATA_HNDL_CLOSE);
+		WritePackString(data_pack, cmd);
+        
     }
     CloseHandle(req);
 	json_cleanup_and_delete(obj);
 	PrintToServer("Close Handle");
     return 0;
 }
-public void SendChatToServer(const char[] msg, const char[] playername, const char[] steamid)
+public void SendChatToServer(const char[] msg, const char[] playername, const char[] steamid, int client)
 {
     char output[1024];
 	char url[256];
     char ord_server[256];
 	
 	GetConVarString(g_ordinance_server, ord_server, sizeof(ord_server));
-	
+	strcopy(playersmsg[client], sizeof(playersmsg[]), msg);
     for (int i = 0; i < strlen(msg); i++)
 	{
 		msg[i] = CharToLower(msg[i]);
@@ -66,6 +90,8 @@ public void SendChatToServer(const char[] msg, const char[] playername, const ch
 	GetConVarString(g_ord_key, ord_key, sizeof(ord_key));
 	SteamWorks_SetHTTPRequestHeaderValue(req, "X-ORD-KEY", ord_key);
     SteamWorks_SetHTTPRequestRawPostBody(req, "application/json", output, strlen(output));
+	SteamWorks_SetHTTPRequestContextValue(req, client);
+	
     SteamWorks_SetHTTPCallbacks(req, OnChatResponse);
     SteamWorks_SendHTTPRequest(req);
 	json_cleanup_and_delete(obj);
@@ -105,14 +131,17 @@ public Action Command_Say(int client, int args)
     }
     GetClientName(client, playername, sizeof(playername));
     GetClientAuthId(client, AuthId_Steam2, steamid, sizeof(steamid));
+    if (!g_ordserveronline)
+	{
+		CPrintToChatAllEx(client, "{teamcolor}%s\x01 : %s", playername, msg);
+    	PrecacheSound(sound, true);
+		EmitSoundToAll(sound);
+	}
     
-   
-    CPrintToChatAllEx(client, "{teamcolor}%s\x01 : %s", playername, msg);
-    PrecacheSound(sound, true);
 		
-	EmitSoundToAll(sound);
+	
     PrintToServer("%s: %s", playername, msg);
-    if (g_ordserveronline) SendChatToServer(msg, playername, steamid);
+    if (g_ordserveronline) SendChatToServer(msg, playername, steamid, client);
     if (StrEqual(msg, "maze", false) && StrEqual(g_mapname, "ord_error", false))
 	{
 		ForceChangeLevel("mazemazemazemaze", "MAZE");
