@@ -28,7 +28,7 @@ public Plugin myinfo =
 	name = "ordinance",
 	author = "TheRedEnemy",
 	description = "",
-	version = "10.1.0",
+	version = "11.0.0",
 	url = "https://github.com/theredenemy/ordinance"
 };
 
@@ -110,7 +110,7 @@ public Action Start_Server(Handle timer)
 	{
 		if (IsClientInGame(i))
 		{
-			SendPlayerData(i);
+			SendPlayerData(i, true);
 		}
 		
 	}
@@ -131,7 +131,7 @@ public void ClearOrdServerPlayersList()
 	SteamWorks_SetHTTPCallbacks(hRequest, OnHTTPResponse);
 	SteamWorks_SendHTTPRequest(hRequest);
 }
-public void SendPlayerData(int client)
+public void SendPlayerData(int client, bool joined)
 {
 	char playername[MAX_NAME_LENGTH];
 	char playersteamid[256];
@@ -144,6 +144,7 @@ public void SendPlayerData(int client)
 	GetClientAuthId(client, AuthId_Steam2, playersteamid, sizeof(playersteamid));
 	obj.SetString("player", playername);
 	obj.SetString("steamid", playersteamid);
+	obj.SetBool("joined", joined);
 	obj.Encode(output, sizeof(output));
 	Format(url, sizeof(url), "%s/ord/players/api/senddata", ord_server);
 	Handle req = SteamWorks_CreateHTTPRequest(k_EHTTPMethodPOST, url);
@@ -214,9 +215,16 @@ public void OnClientPutInServer(int client)
 	SDKHook(client, SDKHook_WeaponSwitchPost, WeaponSwitchPostCheck);
 	if (g_ordserveronline)
 	{
-		SendPlayerData(client);
+		SendPlayerData(client, true);
 	}
 	
+}
+public void OnClientDisconnect(int client)
+{
+	if (g_ordserveronline)
+	{
+		SendPlayerData(client, false);
+	}
 }
 public Action WeaponSwitchPostCheck(int client, int weapon)
 {
