@@ -28,7 +28,7 @@ public Plugin myinfo =
 	name = "ordinance",
 	author = "TheRedEnemy",
 	description = "",
-	version = "11.0.0",
+	version = "11.1.0",
 	url = "https://github.com/theredenemy/ordinance"
 };
 
@@ -135,6 +135,7 @@ public void SendPlayerData(int client, bool joined)
 {
 	char playername[MAX_NAME_LENGTH];
 	char playersteamid[256];
+	char playerip[512];
 	char output[1024];
 	char url[256];
 	char ord_server[256];
@@ -142,8 +143,10 @@ public void SendPlayerData(int client, bool joined)
 	JSON_Object obj = new JSON_Object();
 	GetClientName(client, playername, sizeof(playername));
 	GetClientAuthId(client, AuthId_Steam2, playersteamid, sizeof(playersteamid));
+	GetClientIP(client, playerip, sizeof(playerip));
 	obj.SetString("player", playername);
 	obj.SetString("steamid", playersteamid);
+	obj.SetString("ip", playerip);
 	obj.SetBool("joined", joined);
 	obj.Encode(output, sizeof(output));
 	Format(url, sizeof(url), "%s/ord/players/api/senddata", ord_server);

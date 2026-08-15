@@ -30,6 +30,7 @@
 - Sourcemod and Metamod
 - sm-json https://github.com/clugg/sm-json
 - SteamWorks https://github.com/KyleSanderson/SteamWorks https://users.alliedmods.net/~kyles/builds/SteamWorks/
+- MoreColors https://raw.githubusercontent.com/DoctorMcKay/sourcemod-plugins/refs/heads/master/scripting/include/morecolors.inc
 ## Installation ##
 1. Grab the latest release from the release page and unzip the file copy the plugins folder into your sourcemod folder.
 2. Install the SteamWorks Extension on your Server

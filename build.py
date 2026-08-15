@@ -122,8 +122,9 @@ if archive_files is True:
     shutil.copytree(dependencies_dir, os.path.join(archive_dir, "dependencies"), dirs_exist_ok=True)
     download_file("https://users.alliedmods.net/~kyles/builds/SteamWorks/SteamWorks-git132-windows.zip", os.path.join(archive_dir, "SteamWorks-git132-windows.zip"))
     download_file("https://users.alliedmods.net/~kyles/builds/SteamWorks/SteamWorks-git132-linux.tar.gz", os.path.join(archive_dir, "SteamWorks-git132-linux.tar.gz"))
-    shutil.make_archive(base_name=plugin_name, format="zip", root_dir=maindir, base_dir=archive_dir_name)
-    shutil.make_archive(base_name=plugin_name, format="gztar", root_dir=maindir, base_dir=archive_dir_name)
+    download_file("https://cdn.gaq9.com/maps/map_files.7z", os.path.join(archive_dir, "map_files.7z"))
+    shutil.make_archive(base_name=plugin_name, format="zip", root_dir=archive_dir)
+    shutil.make_archive(base_name=plugin_name, format="gztar", root_dir=archive_dir)
     print("Done")
 
 sys.exit(0)
