@@ -15,7 +15,9 @@ ConVar g_auto_ord_func_level_change;
 ConVar g_ord_render_level;
 ConVar g_ord_func_template;
 ConVar g_ord_end_level;
+ConVar g_ord_play_level;
 ConVar g_server_error_level;
+ConVar g_ord_error_level;
 ConVar g_submit_pawn_level;
 bool g_ordserveronline;
 bool g_pawnalive;
@@ -28,7 +30,7 @@ public Plugin myinfo =
 	name = "ordinance",
 	author = "TheRedEnemy",
 	description = "",
-	version = "11.1.0",
+	version = "12.0.0",
 	url = "https://github.com/theredenemy/ordinance"
 };
 
@@ -49,7 +51,9 @@ public void OnPluginStart()
 	g_ord_func_template = CreateConVar("ord_func_template", "ord_(input)func");
 	g_ord_end_level = CreateConVar("ord_end_level", "ord_end");
 	g_server_error_level = CreateConVar("server_error_level", "server_error");
+	g_ord_error_level = CreateConVar("ord_error_level", "ord_error");
 	g_submit_pawn_level = CreateConVar("submit_pawn_level", "submit_pawn");
+	g_ord_play_level = CreateConVar("ord_play_level", "ord_play");
 	g_ordinance_enabled = CreateConVar("ordinance_enabled", "0");
 	g_ordinance_server = CreateConVar("ordinance_server", "http://127.0.0.1:5000");
 	g_ordserveronline = false;
@@ -65,7 +69,6 @@ public void OnPluginStart()
 	RegServerCmd("pawn_clear", pawn_clear_cmd);
 	RegServerCmd("vul_text", display_vul_text_cmd);
 	makePawnConfig();
-	
 	RegServerCmd("ord_input", ord_input_command);
 	RegServerCmd("ord_render", ord_render_command);
 	RegServerCmd("ord_clear", ord_clear_command);
@@ -278,9 +281,11 @@ public Action OrdPlayEnter_timer(Handle timer)
 }
 public Action OrdError(Handle timer)
 {
-	if (IsMapValid("ord_error"))
+	char ord_error_level[PLATFORM_MAX_PATH];
+	GetConVarString(g_ord_error_level, ord_error_level, sizeof(ord_error_level));
+	if (IsMapValid(ord_error_level))
 	{
-		ForceChangeLevel("ord_error", "PAWN IS DEAD");
+		ForceChangeLevel(ord_error_level, "PAWN IS DEAD");
 	}
 	else
 	{

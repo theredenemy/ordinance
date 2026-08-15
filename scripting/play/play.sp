@@ -40,8 +40,10 @@ public int On_Ord_Play_Response(Handle req, bool bFailure, bool bRequestSuccessf
 public Action OnPlayerRunCmd(int client, int& buttons, int& impulse, float vel[3], float angles[3], int& weapon, int& subtype, int& cmdnum, int& tickcount, int& seed, int mouse[2])
 {
     char ord_server[256];
+    char ord_play_level[PLATFORM_MAX_PATH];
     char url[256];
 	GetConVarString(g_ordinance_server, ord_server, sizeof(ord_server));
+    GetConVarString(g_ord_play_level, ord_play_level, sizeof(ord_play_level));
     if (!g_allow_spray_submit)
     {
         return Plugin_Continue;
@@ -50,7 +52,7 @@ public Action OnPlayerRunCmd(int client, int& buttons, int& impulse, float vel[3
     {
         return Plugin_Continue;
     }
-    if (!StrEqual(g_mapname, "ord_play", false))
+    if (!StrEqual(g_mapname, ord_play_level, false))
     {
         return Plugin_Continue;
     }
