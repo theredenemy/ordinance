@@ -104,6 +104,8 @@ public Action Command_Say(int client, int args)
     char arg[256];
     char sound[] = "friends/message.wav";
     int msg_len;
+	char ord_error_level[PLATFORM_MAX_PATH];
+	GetConVarString(g_ord_error_level, ord_error_level, sizeof(ord_error_level));
     // int ordinance_enabled = GetConVarInt(g_ordinance_enabled);
     
     if (args < 1)
@@ -142,7 +144,7 @@ public Action Command_Say(int client, int args)
 	
     PrintToServer("%s: %s", playername, msg);
     if (g_ordserveronline) SendChatToServer(msg, playername, steamid, client);
-    if (StrEqual(msg, "maze", false) && StrEqual(g_mapname, "ord_error", false))
+    if (StrEqual(msg, "maze", false) && StrEqual(g_mapname, ord_error_level, false))
 	{
 		ForceChangeLevel("mazemazemazemaze", "MAZE");
 	}

@@ -280,6 +280,8 @@ public Action pawn_check_cmd(int args)
 	char reason[256] = "YOU ARE IN THE MACHINE NOW";
 	int autokick = GetConVarInt(g_autokick);
 	char pawn_name[MAX_NAME_LENGTH];
+	char submit_pawn_level[PLATFORM_MAX_PATH];
+	GetConVarString(g_submit_pawn_level, submit_pawn_level, sizeof(submit_pawn_level));
 	if (autokick != 1)
 	{
 		PrintToServer("autokick off");
@@ -307,12 +309,12 @@ public Action pawn_check_cmd(int args)
 	}
 	else
 	{
-		if (!StrEqual(mapname, "submit_pawn", false))
+		if (!StrEqual(mapname, submit_pawn_level, false))
 		{
-			if (IsMapValid("submit_pawn"))
+			if (IsMapValid(submit_pawn_level))
 			{
 				PrintToServer("NO PLAYER PAWN");
-				ForceChangeLevel("submit_pawn", "NO PLAYER PAWN");
+				ForceChangeLevel(submit_pawn_level, "NO PLAYER PAWN");
 				return Plugin_Handled;
 			}
 			else
@@ -377,14 +379,15 @@ public Action display_vul_text_cmd(int args)
 	char weapon[256];
 	char date[64];
 	char state[256];
-
+	char server_error_level[PLATFORM_MAX_PATH];
+	GetConVarString(g_server_error_level, server_error_level, sizeof(server_error_level));
 	if (!g_ordserveronline) {
 		PrintHintTextToAll("ADMIN: ORDINANCE SERVER NOT ONLINE PLEASE TRY AGAIN LATER");
 		if (!IsPawnAlive())
 		{
-			if (IsMapValid("server_error"))
+			if (IsMapValid(server_error_level))
 			{
-				ForceChangeLevel("server_error", "NO INPUT");
+				ForceChangeLevel(server_error_level, "NO INPUT");
 			}
 			else
 			{
