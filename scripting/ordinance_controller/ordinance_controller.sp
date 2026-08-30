@@ -269,7 +269,55 @@ public Action ord_input_command(int args)
 	return Plugin_Handled;
 
 }
-
+public Action ord_if_command(int args)
+{
+	int ordinance_enabled = GetConVarInt(g_ordinance_enabled);
+	char arg[256];
+	char cmd[256];
+	char arg2[256];
+	if (args < 1)
+	{
+		PrintToServer("[SM] Usage: ord_if '<server>' '<online/offline>' '<cmd>' <else> '<cmd>'");
+		return Plugin_Handled;
+	}
+	if (args > 5)
+	{
+		return Plugin_Handled;
+	}
+	GetCmdArg(1, arg, sizeof(arg));
+	if (StrEqual(arg, "server", false))
+	{
+		GetCmdArg(2, arg, sizeof(arg));
+		GetCmdArg(4, arg2, sizeof(arg2));
+		if (StrEqual(arg, "online", false))
+		{
+			if (g_ordserveronline && ordinance_enabled == 1)
+			{
+				GetCmdArg(3, cmd, sizeof(cmd));
+				ServerCommand("%s", cmd);
+			}
+			else if (StrEqual(arg2, "else", false))
+			{
+				GetCmdArg(5, cmd, sizeof(cmd));
+				ServerCommand("%s", cmd);
+			}
+		}
+		if (StrEqual(arg, "offline", false))
+		{
+			if (!g_ordserveronline || ordinance_enabled != 1)
+			{
+				GetCmdArg(3, cmd, sizeof(cmd));
+				ServerCommand("%s", cmd);
+			}
+			else if (StrEqual(arg2, "else", false))
+			{
+				GetCmdArg(5, cmd, sizeof(cmd));
+				ServerCommand("%s", cmd);
+			}
+		}
+	}
+	return Plugin_Handled;
+}
 public Action ord_render_command(int args)
 {
 	int ordinance_enabled = GetConVarInt(g_ordinance_enabled);

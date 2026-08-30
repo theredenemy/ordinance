@@ -30,7 +30,7 @@ public Plugin myinfo =
 	name = "ordinance",
 	author = "TheRedEnemy",
 	description = "",
-	version = "12.2.0",
+	version = "12.3.0",
 	url = "https://github.com/theredenemy/ordinance"
 };
 
@@ -73,6 +73,7 @@ public void OnPluginStart()
 	RegServerCmd("ord_render", ord_render_command);
 	RegServerCmd("ord_clear", ord_clear_command);
 	RegServerCmd("ord_getinputs", ord_get_inputs);
+	RegServerCmd("ord_if", ord_if_command);
 	RegServerCmd("bot_say", Command_Bot_Say);
 	RegServerCmd("ord_mode", ord_mode_command);
 	RegServerCmd("pawn_state", pawn_state_cmd);
