@@ -20,6 +20,7 @@ ConVar g_server_error_level;
 ConVar g_ord_error_level;
 ConVar g_submit_pawn_level;
 bool g_ordserveronline;
+bool g_gameend;
 bool g_pawnalive;
 char g_mapname[128];
 char g_last_weapon[MAXPLAYERS+1][128];
@@ -30,7 +31,7 @@ public Plugin myinfo =
 	name = "ordinance",
 	author = "TheRedEnemy",
 	description = "",
-	version = "12.3.0",
+	version = "13.0.0",
 	url = "https://github.com/theredenemy/ordinance"
 };
 
@@ -57,6 +58,7 @@ public void OnPluginStart()
 	g_ordinance_enabled = CreateConVar("ordinance_enabled", "0");
 	g_ordinance_server = CreateConVar("ordinance_server", "http://127.0.0.1:5000");
 	g_ordserveronline = false;
+	g_gameend = false;
 	g_pawnalive = true;
 	g_spray = false;
 	g_allow_spray_submit = false;
@@ -228,6 +230,7 @@ public void OnClientPutInServer(int client)
 }
 public void OnClientDisconnect(int client)
 {
+	SDKUnhook(client, SDKHook_WeaponSwitchPost, WeaponSwitchPostCheck);
 	if (g_ordserveronline)
 	{
 		SendPlayerData(client, false);
@@ -374,6 +377,7 @@ public int CheckOrdServer(Handle hRequest, bool bFailure, bool bRequestSuccessfu
 		SteamWorks_GetHTTPResponseBodyData(hRequest, data, HTTP_BodySize);
 		JSON_Object obj = json_decode(data);
 		obj.GetString("state", state, sizeof(state));
+		g_gameend = obj.GetBool("game_end", false);
 		g_ord_server_start_timestamp = obj.GetInt("server_start_timestamp");
 		
 		
@@ -474,6 +478,7 @@ public int CheckOrdServer_OnTimer(Handle hRequest, bool bFailure, bool bRequestS
 	SteamWorks_GetHTTPResponseBodyData(hRequest, data, HTTP_BodySize);
 	JSON_Object obj = json_decode(data);
 	int ord_server_start_timestamp = obj.GetInt("server_start_timestamp");
+	g_gameend = obj.GetBool("game_end", false);
 	json_cleanup_and_delete(obj);
 	if (!g_ordserveronline || g_ord_server_start_timestamp != ord_server_start_timestamp)
 	{

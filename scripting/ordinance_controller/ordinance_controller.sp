@@ -188,7 +188,7 @@ public Action ord_mode_command(int args)
 		PrintToServer("[SM] Usage: ord_mode <mode>");
 		return Plugin_Handled;
 	}
-	if (ordinance_enabled != 1 || !g_ordserveronline)
+	if (ordinance_enabled != 1 || !g_ordserveronline || g_gameend)
 	{
 		return Plugin_Handled;
 	}
@@ -228,7 +228,7 @@ public Action ord_input_command(int args)
 		PrintToServer("[SM] Usage: ord_input <input>");
 		return Plugin_Handled;
 	}
-	if (ordinance_enabled != 1 || !g_ordserveronline || !g_pawnalive)
+	if (ordinance_enabled != 1 || !g_ordserveronline || !g_pawnalive || g_gameend)
 	{
 		if (IsMapValid(ord_end_level))
 		{
@@ -291,7 +291,7 @@ public Action ord_if_command(int args)
 		GetCmdArg(4, arg2, sizeof(arg2));
 		if (StrEqual(arg, "online", false))
 		{
-			if (g_ordserveronline && ordinance_enabled == 1)
+			if (g_ordserveronline && ordinance_enabled == 1 && !g_gameend)
 			{
 				GetCmdArg(3, cmd, sizeof(cmd));
 				ServerCommand("%s", cmd);
@@ -304,7 +304,7 @@ public Action ord_if_command(int args)
 		}
 		if (StrEqual(arg, "offline", false))
 		{
-			if (!g_ordserveronline || ordinance_enabled != 1)
+			if (!g_ordserveronline || ordinance_enabled != 1 || g_gameend)
 			{
 				GetCmdArg(3, cmd, sizeof(cmd));
 				ServerCommand("%s", cmd);
@@ -328,7 +328,7 @@ public Action ord_render_command(int args)
 	GetConVarString(g_ord_render_level, ord_render_level, sizeof(ord_render_level));
 	if (IsMapValid(ord_render_level))
 	{
-		if (ordinance_enabled == 1) 
+		if (ordinance_enabled == 1 && !g_gameend) 
 		{
 			Format(url, sizeof(url), "%s/ord/input/render", ord_server);
 			Handle req = SteamWorks_CreateHTTPRequest(k_EHTTPMethodGET, url);
@@ -359,7 +359,7 @@ public Action ord_get_inputs(int args)
 	char url[256];
 	char ord_server[256];
 	GetConVarString(g_ordinance_server, ord_server, sizeof(ord_server));
-	if (ordinance_enabled == 1) 
+	if (ordinance_enabled == 1 && !g_gameend) 
 	{
 		Format(url, sizeof(url), "%s/ord/input", ord_server);
 		Handle req = SteamWorks_CreateHTTPRequest(k_EHTTPMethodGET, url);
