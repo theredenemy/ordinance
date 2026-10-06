@@ -31,7 +31,7 @@ public Plugin myinfo =
 	name = "ordinance",
 	author = "TheRedEnemy",
 	description = "",
-	version = "13.0.0",
+	version = "13.1.0",
 	url = "https://github.com/theredenemy/ordinance"
 };
 

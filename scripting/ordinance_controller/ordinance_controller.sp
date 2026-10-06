@@ -76,7 +76,7 @@ public int OnRenderResponse(Handle req, bool bFailure, bool bRequestSuccessful, 
 	if (StrEqual(message, "ORD_ERROR"))
 	{
 		PrintToServer("PAWN IS DEAD");
-		CreateTimer(20.0, OrdError);
+		//CreateTimer(20.0, OrdError);
 	}
 	else if(StrEqual(message, "NO_INPUT"))
 	{
@@ -328,7 +328,7 @@ public Action ord_render_command(int args)
 	GetConVarString(g_ord_render_level, ord_render_level, sizeof(ord_render_level));
 	if (IsMapValid(ord_render_level))
 	{
-		if (ordinance_enabled == 1 && !g_gameend) 
+		if (ordinance_enabled == 1 && g_ordserveronline) 
 		{
 			Format(url, sizeof(url), "%s/ord/input/render", ord_server);
 			Handle req = SteamWorks_CreateHTTPRequest(k_EHTTPMethodGET, url);
