@@ -60,7 +60,7 @@ if platform == "win32":
         print("Downloading SourceMod Windows")
         archive = os.path.join(maindir, "sourcemod-win.zip")
         os.mkdir(dir)
-        download_file("https://sm.alliedmods.net/smdrop/1.12/sourcemod-1.12.0-git7221-windows.zip", archive)
+        download_file("https://sm.alliedmods.net/smdrop/1.12/sourcemod-1.12.0-git7262-windows.zip", archive)
         if not os.path.isfile(archive):
             sys.exit(1)
         print(f"Unpacking Archive {archive}")
@@ -76,7 +76,7 @@ elif platform == "linux":
         print("Downloading SourceMod Linux")
         archive = os.path.join(maindir, "sourcemod-linux.tar.gz")
         os.mkdir(dir)
-        download_file("https://sm.alliedmods.net/smdrop/1.12/sourcemod-1.12.0-git7221-linux.tar.gz", archive)
+        download_file("https://sm.alliedmods.net/smdrop/1.12/sourcemod-1.12.0-git7262-linux.tar.gz", archive)
         if not os.path.isfile(archive):
             sys.exit(1)
         print(f"Unpacking Archive {archive}")
